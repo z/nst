@@ -501,10 +501,22 @@ function create_maplist {
 # This install Nexuiz from SVN
 install_nexuiz() {
 	cd $core_dir
-	cd install && chmod +x nst_install.sh
-	touch lock
+	#cd install && chmod +x nst_install.sh
 	#./nst_install.sh
+	nexst_shortcuts
 } # End install_nexuiz
+
+# Post installation shortcuts
+nexst_shortcuts() {
+	if [[ ! -f $core_dir/install/lock ]]; then
+		core_file=$(ls $core_dir/nst_core*.sh |egrep "[0-9]{6}" |sort -r |head -n 1)
+		echo -e "\nAdding alias \"nexst\" to .bashrc\n"
+		echo -e "\nalias nexst='$(pwd)/$core_file'" >> ~/.bashrc
+		touch $core_dir/install/lock
+	else
+		echo -e "NST has already run through the initial installation"
+	fi
+} # End next_shortcuts
 
 # Routes Help Functions based on whether extend = true or not
 nn_servers_help_router ()
