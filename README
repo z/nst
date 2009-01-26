@@ -1,7 +1,7 @@
 Nexuiz Server Toolz
 
 Version: 0.98
-Released: 01/26/09
+(sorta)Released: 01/26/09
 Created By: Tyler "-z-" Mulligan of the Nexuiz Ninjaz (www.nexuizninjaz.com)
 
 Required Software: screen
@@ -13,7 +13,7 @@ This script was created to help admins manage many instances of servers by loadi
 into seperate screens they can easily call by name.  For more information check --help.
 
 Usage: nexst --(start_all|stop_all|restart_all|start <server>|stop <server>|restart <server>|list|view <server>|edit <server>|rcon2irc (start |stop|restart|view) <server>|create_maplist <gametype>|help)
-	type --help for more
+	type --help for more information
 	
 
 Note:	
