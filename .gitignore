@@ -1,0 +1,4 @@
+install/lock
+nexuiz/svn/*
+config/serverz/offline
+config/serverz/rcon2irc/offline
