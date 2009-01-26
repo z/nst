@@ -1,9 +1,22 @@
-Title: Nexuiz Ninjaz - Nexuiz Server Toolz Extension: Search
+Nexuiz Server Toolz
+
+Version: 0.98
+Released: 01/26/08
 Created By: Tyler "-z-" Mulligan of the Nexuiz Ninjaz (www.nexuizninjaz.com)
 
-This script allows admins to extend Nexuiz Server Toolz with their own
-functions.
+Required Software: screen
+Optional Software: 'unzip' for package functions , 'qstat' for player numbers,
+'svn' for nexuiz install, 'perl' for rcon2irc
 
+Description:
+This script was created to help admins manage many instances of servers by loading them
+into seperate screens they can easily call by name.  For more information check --help.
+
+Usage: nexst --(start_all|stop_all|restart_all|start <server>|stop <server>|restart <server>|list|view <server>|edit <server>|rcon2irc (start |stop|restart|view) <server>|create_maplist <gametype>|help)
+	type --help for more
+	
+
+Note:	
 This is still considered a pre-release as the install and plugin system are
 not yet fully complete.  Use at your own risk and just be patient.  Everything
-will be automagic soon enough.
+will be automagic soon enough
