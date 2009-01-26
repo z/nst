@@ -1,5 +1,7 @@
 #!/bin/bash
 #
+# !! WARNING !! THIS SCRIPT IS A MESS AND INCOMPLETE !!!!!!!!
+#
 # Title: Nexuiz Ninjaz - Nexuiz Server Toolz Extended
 # Created By: Tyler "-z-" Mulligan of the Nexuiz Ninjaz (www.nexuizninjaz.com)
 #
