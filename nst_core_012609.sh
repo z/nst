@@ -5,7 +5,7 @@
 # Nexuiz Server Toolz
 #
 # Version: 0.98
-# Released: 01/26/08
+# Released: 01/26/09
 # Created By: Tyler "-z-" Mulligan of the Nexuiz Ninjaz (www.nexuizninjaz.com)
 #
 # Required Software: screen
