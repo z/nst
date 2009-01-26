@@ -1,0 +1,3 @@
+svn is automatically installed to this folder, you can optionally unzip the latest stable here as well.
+
+The Nexuiz version NST runs is defined in config/base.conf
