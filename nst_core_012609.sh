@@ -498,25 +498,63 @@ function create_maplist {
 # Start System Functions
 #################
 
-# This install Nexuiz from SVN
-install_nexuiz() {
-	cd $core_dir
-	#cd install && chmod +x nst_install.sh
-	#./nst_install.sh
-	nexst_shortcuts
-} # End install_nexuiz
+# This installs files/settings for nst
+install_nst() {
+	# check all dependecies
+	# config settings now? -- write to base.conf
+	# install nexuiz?
+	nexst_shortcuts_add
+} # End install_nst
+
+# This uninstalls files/settings for nst
+uninstall_nst() {
+	nexst_shortcuts_remove
+	# remove files?
+} # End uninstall_nst
 
 # Post installation shortcuts
-nexst_shortcuts() {
+nexst_shortcuts_add() {
 	if [[ ! -f $core_dir/install/lock ]]; then
 		core_file=$(ls $core_dir/nst_core*.sh |egrep "[0-9]{6}" |sort -r |head -n 1)
 		echo -e "\nAdding alias \"nexst\" to .bashrc\n"
+		# Add alias to .bashrc
 		echo -e "\nalias nexst='$(pwd)/$core_file'" >> ~/.bashrc
+		# Alias NOW
+		#alias nexst='$(pwd)/$core_file' -- doesn't work
+		# lock installation
 		touch $core_dir/install/lock
 	else
-		echo -e "NST has already run through the initial installation"
+		echo -e "NST has already run through the initial installation - remove the lock file if you know what you are doing"
 	fi
-} # End next_shortcuts
+} # End next_shortcuts_add
+
+# Uninstall shortcuts
+nexst_shortcuts_remove() {
+	if [[ -f ~/.bashrc ]]; then
+		core_file=$(ls $core_dir/nst_core*.sh |egrep "[0-9]{6}" |sort -r |head -n 1)
+		echo -e "\nRemoving alias \"nexst\" from .bashrc\n"
+		# Remove alias from .bashrc
+		sed -i 's/alias nexst.*//g' ~/.bashrc
+		# Unalias NOW -- doesn't work
+		#unalias nexst
+		# remove lock
+		if [[ -f $core_dir/install/lock ]]; then
+			rm $core_dir/install/lock
+		else
+			echo "[warning] lock file doesn't exist"
+		fi
+	else
+		echo -e "For some reason, you don't have a ~/.bashrc file, so NST is already uninstalled, you can delete the nst folder and all of its contents."
+	fi
+} # End next_shortcuts_add
+
+# This installs Nexuiz from SVN
+install_nexuiz() {
+	#cd $core_dir
+	#cd install && chmod +x nst_install.sh
+	#./nst_install.sh
+	echo "pretending to install nexuiz here"
+} # End install_nexuiz
 
 # Routes Help Functions based on whether extend = true or not
 nn_servers_help_router ()
@@ -652,8 +690,10 @@ case $1 in
   --rcon) rcon $*;;							# passes rcon commands to the server
   --edit) edit_server $2;;					# edit a specific server's cfg
   --create_maplist) create_maplist $2 $3;;	# create maplist for the passed <gametype> <directory>
-  --install_nexuiz) install_nexuiz;;		# create maplist for the passed <gametype> <directory>
+  --install_nst) install_nst;;				# Installs / configures NST easily
+  --uninstall_nst) uninstall_nst;;			# Uninstalls / configures NST easily
+  --install_nexuiz) install_nexuiz;;		# Installs Nexuiz from SVN
   --help) nn_servers_help_router;;			# command line parameter help
   --nn_servers_help) nn_servers_help;;		# Pure nn_servers_help - need to break infite loop by plugin
-  *) nn_servers_extend $1 $2 $3 $4;;		# gigo
+  *) nn_servers_extend $1 $2 $3 $4;;		# pass off to extend function if no flag is found
 esac # End case switch
