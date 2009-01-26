@@ -236,7 +236,10 @@ list_servers() # Format all the current running servers in a easy to read way
 			echo -e "Address:" $gsaddress:$gsport "\t  PID:" $gspid "  \tName:" $gsname "    \tPlayers:" $gsplayers "\trcon2irc:" $rconstatus
 		done; echo
 	else
-		echo -e "\n[WARNING] No Nexuiz servers are currently running\n"
+		echo -e "\n[WARNING] No Nexuiz servers are currently running"
+		echo -e "\n[ATTENTION] Here's a list of available cfgs:\n"
+		ls $core_dir/config/serverz/ |grep .cfg
+		echo
 	fi
 } # End list_servers
 
@@ -554,6 +557,8 @@ install_nexuiz() {
 	#cd install && chmod +x nst_install.sh
 	#./nst_install.sh
 	echo "pretending to install nexuiz here"
+	latest_revision=$(ls $core_dir/nexuiz/ |grep Nexuiz_SVN |tail -n1)
+	sed -i "s#basedir=.*#basedir=\"$core_dir/nexuiz/${latest_revision}\"#" $core_dir/config/base.conf
 } # End install_nexuiz
 
 # Routes Help Functions based on whether extend = true or not
