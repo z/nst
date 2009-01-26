@@ -520,7 +520,7 @@ nexst_shortcuts_add() {
 		# Add alias to .bashrc
 		echo -e "\nalias nexst='$(pwd)/$core_file'" >> ~/.bashrc
 		# Alias NOW
-		#alias nexst='$(pwd)/$core_file' -- doesn't work
+		echo "alias nexst='$(pwd)/$core_file'"
 		# lock installation
 		touch $core_dir/install/lock
 	else
