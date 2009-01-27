@@ -47,9 +47,9 @@
 # this script with a plugin if you wish to easily update your NST core in
 # the future
 
-#####
+###############
 # Globals
-#################
+####################################################################
 
 # Needed to work with aliases
 core_dir=$(cd $(dirname $0); pwd)
@@ -57,9 +57,9 @@ core_dir=$(cd $(dirname $0); pwd)
 # Include config
 source $core_dir/config/base.conf
 
-#####
+###############
 # Start Server Functions
-#################
+####################################################################
 
 # Starts all Nexuiz Servers
 start_all()
@@ -257,9 +257,9 @@ function view_server {
 	fi
 } # End view_server
 
-#####
+###############
 # Start rcon2irc Functions
-#################
+####################################################################
 
 # Routes rcon2irc commands
 function rcon2irc_router {
@@ -371,9 +371,9 @@ rcon() {
 	rm $core_dir/config/serverz/rcon2irc/temp_rcon.conf
 }
 
-#####
+###############
 # Start Server Tool Functions
-#################
+####################################################################
 
 # Edits a specific server config based on the session name (--list name)
 function edit_server {
@@ -497,9 +497,9 @@ function create_maplist {
 } # End create_maplist
 
 
-#####
+###############
 # Start System Functions
-#################
+####################################################################
 
 # This installs files/settings for nst
 install_nst() {
@@ -570,14 +570,22 @@ install_nexuiz() {
 	if [[ -f $(ls *.sh |grep sb_install) ]]; then
 		sb_script=$(ls *.sh |grep sb_install |tail -n1)
 		chmod +x $sb_script
-		#./nst_install.sh
-		echo "core dir: $core_dir"
+		echo -e "\nThis is going to take a while, it's not hanging.  You might want to make a sandwhich!\n"
+		./$sb_script -t s
 		latest_revision=$(ls $core_dir/nexuiz/ |grep Nexuiz_SVN |tail -n1)
 		sed -i "s#basedir=.*#basedir=\"$core_dir/nexuiz/${latest_revision}\"#" $core_dir/config/base.conf
 	else 
 		echo -e "[FAILED] No install script found!  Did you delete it?\n"
 	fi
 } # End install_nexuiz
+
+# This Packages NST for distribution
+pack_nst() {
+	# get a list of all the files 
+	find $core_dir ! -type f -print | egrep 'svn|Nexuiz_SVN_.*|\.git.*|serverz.*offline' > exclude
+	tar cvf nst-pack.tar $core_dir --exclude-from=exclude
+	rm exclude
+} # End pack_nst
 
 # Routes Help Functions based on whether extend = true or not
 nn_servers_help_router ()
@@ -716,6 +724,7 @@ case $1 in
   --install_nst) install_nst;;				# Installs / configures NST easily
   --uninstall_nst) uninstall_nst;;			# Uninstalls / configures NST easily
   --install_nexuiz) install_nexuiz;;		# Installs Nexuiz from SVN
+  --pack_nst) pack_nst;;					# Packs NST for distribution
   --help) nn_servers_help_router;;			# command line parameter help
   --nn_servers_help) nn_servers_help;;		# Pure nn_servers_help - need to break infite loop by plugin
   *) nn_servers_extend $1 $2 $3 $4;;		# pass off to extend function if no flag is found
