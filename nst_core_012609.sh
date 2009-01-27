@@ -503,10 +503,21 @@ function create_maplist {
 
 # This installs files/settings for nst
 install_nst() {
-	# check all dependecies
-	# config settings now? -- write to base.conf
-	# install nexuiz?
-	nexst_shortcuts_add
+	if [[ ! -f $core_dir/install/lock ]]; then
+		# check all dependecies
+		# config settings now? -- write to base.conf
+		# Install Nexuiz?
+		echo "Do you want to install nexuiz now (y/n)?"
+		read answer
+		if [ "$answer" == "y" ]; then
+			install_nexuiz
+		else
+			echo -e "\n[alert] Not installing Nexuiz, You either need to run --install_nexuiz later or unzip a stable release 2.4.2 or higher in the nst/nexuiz folder."
+		fi
+		nexst_shortcuts_add
+	else
+		echo -e "NST has already run through the initial installation - remove the lock file if you know what you are doing"
+	fi
 } # End install_nst
 
 # This uninstalls files/settings for nst
@@ -518,7 +529,8 @@ uninstall_nst() {
 # Post installation shortcuts
 nexst_shortcuts_add() {
 	if [[ ! -f $core_dir/install/lock ]]; then
-		core_file=$(ls $core_dir/nst_core*.sh |egrep "[0-9]{6}" |sort -r |head -n 1)
+		#core_file=$(ls $core_dir/nst_core*.sh |egrep "[0-9]{6}" |sort -r |head -n 1)
+		core_file=$(ls $core_dir |grep nst_core |tail -n1)
 		echo -e "\nAdding alias \"nexst\" to .bashrc\n"
 		# Add alias to .bashrc
 		echo -e "\nalias nexst='$(pwd)/$core_file'" >> ~/.bashrc
@@ -534,7 +546,7 @@ nexst_shortcuts_add() {
 # Uninstall shortcuts
 nexst_shortcuts_remove() {
 	if [[ -f ~/.bashrc ]]; then
-		core_file=$(ls $core_dir/nst_core*.sh |egrep "[0-9]{6}" |sort -r |head -n 1)
+		core_file=$(ls $core_dir |grep nst_core |tail -n1)
 		echo -e "\nRemoving alias \"nexst\" from .bashrc\n"
 		# Remove alias from .bashrc
 		sed -i 's/alias nexst.*//g' ~/.bashrc
@@ -554,12 +566,17 @@ nexst_shortcuts_remove() {
 # This installs Nexuiz from SVN
 install_nexuiz() {
 	echo -e "\n-- Starting Nexuiz Install --\n"
-	cd $core_dir
-	sb_script=$(ls *.sh |grep sb_install |tail -n1)
-	cd nexuiz && chmod +x $sb_script
-	#./nst_install.sh
-	latest_revision=$(ls $core_dir/nexuiz/ |grep Nexuiz_SVN |tail -n1)
-	sed -i "s#basedir=.*#basedir=\"$core_dir/nexuiz/${latest_revision}\"#" $core_dir/config/base.conf
+	cd $core_dir/nexuiz
+	if [[ -f $(ls *.sh |grep sb_install) ]]; then
+		sb_script=$(ls *.sh |grep sb_install |tail -n1)
+		chmod +x $sb_script
+		#./nst_install.sh
+		echo "core dir: $core_dir"
+		latest_revision=$(ls $core_dir/nexuiz/ |grep Nexuiz_SVN |tail -n1)
+		sed -i "s#basedir=.*#basedir=\"$core_dir/nexuiz/${latest_revision}\"#" $core_dir/config/base.conf
+	else 
+		echo -e "[FAILED] No install script found!  Did you delete it?\n"
+	fi
 } # End install_nexuiz
 
 # Routes Help Functions based on whether extend = true or not
