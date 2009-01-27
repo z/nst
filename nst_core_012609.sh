@@ -553,10 +553,11 @@ nexst_shortcuts_remove() {
 
 # This installs Nexuiz from SVN
 install_nexuiz() {
-	#cd $core_dir
-	#cd install && chmod +x nst_install.sh
+	echo -e "\n-- Starting Nexuiz Install --\n"
+	cd $core_dir
+	sb_script=$(ls *.sh |grep sb_install |tail -n1)
+	cd nexuiz && chmod +x $sb_script
 	#./nst_install.sh
-	echo "pretending to install nexuiz here"
 	latest_revision=$(ls $core_dir/nexuiz/ |grep Nexuiz_SVN |tail -n1)
 	sed -i "s#basedir=.*#basedir=\"$core_dir/nexuiz/${latest_revision}\"#" $core_dir/config/base.conf
 } # End install_nexuiz

@@ -15,6 +15,12 @@
 # todo - make search string qouted or reverse parameters
 #
 
+# Needed to work with aliases
+core_dir=$(dirname $(which $0) | sed 's/\/[a-Z0-9_-]*\/[a-Z0-9_-]*\/.$//' )
+
+# Include config
+source $core_dir/config/base.conf
+
 # Search packs searches all packages in your data directory
 search_packs() {
 	
@@ -52,6 +58,7 @@ search_packs() {
 # Extended Help
 nn_servers_ext_help ()
 {
+	cd $core_dir
 	core_file=$(ls nst_core*.sh |egrep "[0-9]{6}" |sort -r |head -n 1)
 	./$core_file --nn_servers_help
 	

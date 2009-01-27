@@ -19,26 +19,20 @@
          qQE      ]QQQ#     / / / /_/ / /_/ / / / /_
          ~"`      )QQQW.   /_/  \____/\____/_/ /___/
                     -"$L
-                      )Wc
+                      )Wc    created by -z- of www.nexuizninjaz.com
                        "$;                                    
 
-Version: 0.98
-(sorta)Released: 01/26/09
-Created By: Tyler "-z-" Mulligan of the Nexuiz Ninjaz (www.nexuizninjaz.com)
 
-Required Software: screen
-Optional Software: 'unzip' for package functions , 'qstat' for player numbers,
-'svn' for nexuiz install, 'perl' for rcon2irc
+=Installation=
 
-Description:
-This script was created to help admins manage many instances of servers by loading them
-into seperate screens they can easily call by name.  For more information check --help.
+   1. unzip to a directory of your choosing, say ’~/nst’
+   2. chmod +x install/install.sh
+   3. ./install/install.sh
 
-Usage: nexst --(start_all|stop_all|restart_all|start <server>|stop <server>|restart <server>|list|view <server>|edit <server>|rcon2irc (start |stop|restart|view) <server>|create_maplist <gametype>|help)
-	type --help for more information
-	
+=Uninstallation=
 
-Note:	
-This is still considered a pre-release as the install and plugin system are
-not yet fully complete.  Use at your own risk and just be patient.  Everything
-will be automagic soon enough
+   1. nexst --uninstall_nst
+
+=Moar=
+
+For the most up-to-date information and help, install nexst and type: nexst --help
