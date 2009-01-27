@@ -5,8 +5,6 @@
 # Title: Nexuiz Ninjaz - Nexuiz Server Toolz Extended
 # Created By: Tyler "-z-" Mulligan of the Nexuiz Ninjaz (www.nexuizninjaz.com)
 #
-# !! NOTE !! Please only use this script internally, do not distribute
-#
 # This script is an extension of the Nexuiz Server Toolz script to help
 # manage game servers.  This file is included when you call
 # nn_server_toolz.sh if extend=true.
