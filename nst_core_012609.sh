@@ -52,7 +52,7 @@
 #################
 
 # Needed to work with aliases
-core_dir=$(cd $(dirname $0); pwd | sed 's/\/.$//' )
+core_dir=$(cd $(dirname $0); pwd)
 
 # Include config
 source $core_dir/config/base.conf
