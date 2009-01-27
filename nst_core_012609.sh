@@ -52,7 +52,7 @@
 #################
 
 # Needed to work with aliases
-core_dir=$(dirname $(which $0) | sed 's/\/.$//' )
+core_dir=$(cd $(dirname $0); pwd | sed 's/\/.$//' )
 
 # Include config
 source $core_dir/config/base.conf
@@ -533,9 +533,9 @@ nexst_shortcuts_add() {
 		core_file=$(ls $core_dir |grep nst_core |tail -n1)
 		echo -e "\nAdding alias \"nexst\" to .bashrc\n"
 		# Add alias to .bashrc
-		echo -e "\nalias nexst='$(pwd)/$core_file'" >> ~/.bashrc
+		echo -e "\nalias nexst='$core_dir/$core_file'" >> ~/.bashrc
 		# Alias NOW
-		echo "alias nexst='$(pwd)/$core_file'"
+		echo "alias nexst='$core_dir/$core_file'"
 		# lock installation
 		touch $core_dir/install/lock
 	else
