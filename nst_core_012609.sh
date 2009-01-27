@@ -582,9 +582,13 @@ install_nexuiz() {
 # This Packages NST for distribution
 pack_nst() {
 	# get a list of all the files 
-	find $core_dir ! -type f -print | egrep 'svn|Nexuiz_SVN_.*|\.git.*|serverz.*offline' > exclude
-	tar cvf nst-pack.tar $core_dir --exclude-from=exclude
-	rm exclude
+	cd $core_dir
+	cd ..
+	find $core_dir ! -type f -print | egrep 'svn|Nexuiz_SVN_.*|\.git.*|serverz.*offline' > nst_exclude
+	sed -i "s#$core_dir#nst#" nst_exclude
+	echo -e "\nnst_exclude" >> nst_exclude
+	tar cvf nst-pack.tar * --exclude-from=nst_exclude
+	rm nst_exclude
 } # End pack_nst
 
 # Routes Help Functions based on whether extend = true or not
