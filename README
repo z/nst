@@ -23,22 +23,23 @@
                        "$;                                    
 
 Version: 0.98
-(sorta)Released: 01/26/09
+Pre-Released: 01/26/09 (not yet officially released / not yet FINISHED)
 Created By: Tyler "-z-" Mulligan of the Nexuiz Ninjaz (www.nexuizninjaz.com)
 
 Required Software: screen
 Optional Software: 'unzip' for package functions , 'qstat' for player numbers,
-'svn' for nexuiz install, 'perl' for rcon2irc
+'svn' for nexuiz install, 'perl' for rcon2irc and rcon
 
 Description:
 This script was created to help admins manage many instances of servers by loading them
 into seperate screens they can easily call by name.  For more information check --help.
 
-Usage: nexst --(start_all|stop_all|restart_all|start <server>|stop <server>|restart <server>|list|view <server>|edit <server>|rcon2irc (start |stop|restart|view) <server>|create_maplist <gametype>|help)
-	type --help for more information
-	
+Usage: nexst --(start_all|stop_all|restart_all|start <server>|stop <server>|restart <server>|list|view <server>|edit <server>|rcon2irc (start |stop|restart|view) <server>|create_maplist <gametype>|install_nst|uninstall_nst|install_nexuiz|pack_nst|help)
 
-Note:	
-This is still considered a pre-release as the install and plugin system are
-not yet fully complete.  Use at your own risk and just be patient.  Everything
-will be automagic soon enough
+for more information, type: nexst --help
+
+Special Thanks:
+NST wouldn't have been possible if it wasn't for the help and support of the following people:
+MrBougo, Soulbringer, divVerent, mkzelda, Dokujisan, merlijn and the many others who have helped test NST.
+
+This is the first bash script I've written longer than 10 lines.  While the language is a bit limiting at times, it's encouraged creative thinking and chanllenged me to think outside the box.  I'm very pleased with how far NST has gotten.  Going from a ~300 line screen manager to a full out extendable framework for Nexuiz game servers.

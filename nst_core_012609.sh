@@ -701,6 +701,18 @@ CFG TOOLZ
 										
 							[directory]:	(Optional) if you wan to use a folder other than ~/.nexuiz/data
 
+SYSTEM TOOLZ
+
+--install_nst						Used to install Nexuiz Server Toolz -- install.sh calls this
+
+--uninstall_nst						Used to uninstall Nexuiz Server Toolz
+
+--install_nexuiz					Installs Nexuiz using Soulbringer's Nexuiz SVN install script.  It sets things up complete
+							with configuration so you can just start up NST after the install -- install.sh asks if you'd like
+							to do this, it's suggested you do.
+							
+--pack_nst						NST can package itself as a tarball.  This is handy for cloning or migrating servers.
+
 INFORMATION
 
 --help							You're lookin at it :-P - Thanks to Soulbringer for this case switch/framework.
