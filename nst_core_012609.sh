@@ -119,7 +119,6 @@ start_server()
 				echo -e " -- [No logs to archive for: $screenname]"
 			fi
 			
-#			cd $core_dir/config/serverz
 			screen -m -d -S $screenname $basedir/./nexuiz-dedicated +exec $cfgname
 			# this isn't currently being used because you can tell the server to use a different progs.dat file in the cfg but what it would do is allow you to use a 'mod directory'
 			#screen -m -d -S $screenname ./nexuiz-dedicated +exec $cfgname -userdir $moddir
@@ -340,7 +339,7 @@ function rcon2irc_view {
 } # End rcon2irc_server
 
 # Passes rcon commands to the server based on the rcon2irc conf
-rcon() {
+rcon() { # LITTLE BROKEN RIGHT NOW
 	# server name
 	#servername="nns_ctf_light"
 	servername=$(echo $* | awk '{ print $2 }')
@@ -365,7 +364,7 @@ rcon() {
 	command=$(echo $* | sed 's/^--rcon [a-z0-9_-]* //' | sed 's/"/\\\"/g' )
 	#echo $command
 	#echo "execing command: rcon_address=$dp_server rcon_password=$dp_password $basedir/Docs/server/./rcon.pl $command"
-	rcon_address=$dp_server rcon_password=$dp_password $basedir/Docs/server/./rcon.pl "$command"
+	rcon_address=$dp_server rcon_password=$dp_password $basedir/server/./rcon.pl "$command"
 	
 	#cleanup
 	rm $core_dir/config/serverz/rcon2irc/temp_rcon.conf
@@ -587,6 +586,7 @@ pack_nst() {
 	find $core_dir ! -type f -print | egrep 'svn|Nexuiz_SVN_.*|\.git.*|serverz.*offline' > nst_exclude
 	sed -i "s#$core_dir#nst#" nst_exclude
 	echo -e "\nnst_exclude" >> nst_exclude
+	echo -e "\nnst/.gitignore" >> nst_exclude
 	tar cvf nst-pack.tar * --exclude-from=nst_exclude
 	rm nst_exclude
 } # End pack_nst
@@ -704,11 +704,26 @@ INFORMATION
 nn_servers_extend ()
 {
 	# Get Gametype
-	if [ $extend == true ]; then
-		$core_dir/extraz/pluginz/./$ext_file $1 $2 $3 $4
-	else
-		nn_servers_help
-	fi
+	#if [ $extend == true ]; then
+		#$core_dir/extraz/pluginz/./$ext_file $1 $2 $3 $4
+	#else
+		#nn_servers_help
+	#fi
+	
+	cd $core_dir/extraz/pluginz
+	# Check plugins for function
+	for plugin in $(ls); do
+		pfunction=$(echo $1 |sed 's/\-/\\-/g')
+		string=$(egrep "$pfunction\)" $plugin)
+		if [[ "$string" != "" ]]; then
+			# check if chmod +X
+			# execute script with parameter
+			$core_dir/extraz/pluginz/./$plugin $1 $2 $3 $4
+			exit 0
+		fi
+	done
+	
+	#echo $plugin
 } # End nn_servers_extend
 
 # Case swtich to filter params
