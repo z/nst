@@ -62,16 +62,16 @@ nn_servers_ext_help ()
 	#core_file=$(ls nst_core*.sh |egrep "[0-9]{6}" |sort -r |head -n 1)
 	#./$core_file --nn_servers_help
 	
-echo "
+echo -e "\n
 +=========================+
 |  NSTP Search Functions  |
 +=========================+
 
---search_packs [string] [directory]		Searches all packages in your data directory
+--search_packs [string] [directory]			Searches all packages in your data directory
 						
-						[string]:	grep is used to search the packages.  man grep for more information.		
+							[string]:	grep is used to search the packages.  man grep for more information.		
 						
-						[directory]:	(Optional) if you wan to use a folder other than ~/.nexuiz/data
+							[directory]:	(Optional) if you wan to use a folder other than ~/.nexuiz/data
 "
 } # End nn_servers_ext_help
 

@@ -704,13 +704,6 @@ INFORMATION
 # Routes parameters not found in the core to plugin files
 nn_servers_extend ()
 {
-	# Get Gametype
-	#if [ $extend == true ]; then
-		#$core_dir/extraz/pluginz/./$ext_file $1 $2 $3 $4
-	#else
-		#nn_servers_help
-	#fi
-	
 	cd $core_dir/extraz/pluginz
 	# Check plugins for function
 	for plugin in $(ls); do
@@ -731,7 +724,7 @@ nn_servers_extend ()
 	
 	core_file=$(ls $core_dir |grep nst_core |tail -n1)
 	$core_dir/$core_file --help
-	echo $full_help
+	echo "$full_help"
 	
 	#echo $plugin
 } # End nn_servers_extend

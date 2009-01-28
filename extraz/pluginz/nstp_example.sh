@@ -25,12 +25,12 @@ nn_servers_ext_help ()
 	#core_file=$(ls *.sh |grep nst_core |tail -n1)
 	#./$core_file --nn_servers_help
 	
-echo "
+echo -e "\n
 +==============================+
 |  Extended Example Functions  |
 +==============================+
 
---example function [param 1] [param 2] [param 3]		An example of an extended function passing 3 parameters
+--example function [param 1] [param 2] [param 3]	An example of an extended function passing 3 parameters
 "
 } # End nn_servers_ext_help
 
