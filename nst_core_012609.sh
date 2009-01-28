@@ -595,11 +595,17 @@ pack_nst() {
 # Routes Help Functions based on whether extend = true or not
 nn_servers_help_router ()
 {
-	if [ $extend == true ]; then
-		nn_servers_extend --ext_help
-	else
-		nn_servers_help
-	fi
+	cd $core_dir/extraz/pluginz
+	
+	for plugin in $(ls); do
+		ext_help=$($core_dir/extraz/pluginz/$plugin --ext_help)
+		full_help="$full_help $ext_help"
+	done
+	
+	core_file=$(ls $core_dir |grep nst_core |tail -n1)
+	nn_servers_help
+	echo "$full_help"
+	
 } # nn_servers_help_router
 
 # The Help Function for NsT
@@ -748,6 +754,6 @@ case $1 in
   --install_nexuiz) install_nexuiz;;		# Installs Nexuiz from SVN
   --pack_nst) pack_nst;;					# Packs NST for distribution
   --help) nn_servers_help_router;;			# command line parameter help
-  --nn_servers_help) nn_servers_help;;		# Pure nn_servers_help - need to break infite loop by plugin
+  --nn_servers_help) nn_servers_help;;		# Pure nn_servers_help
   *) nn_servers_extend $1 $2 $3 $4;;		# pass off to extend function if no flag is found
 esac # End case switch
