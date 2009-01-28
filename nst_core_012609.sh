@@ -598,7 +598,7 @@ nn_servers_help_router ()
 	cd $core_dir/extraz/pluginz
 	
 	for plugin in $(ls); do
-		ext_help=$($core_dir/extraz/pluginz/$plugin --ext_help)
+		ext_help=$($core_dir/extraz/pluginz/$plugin --help)
 		full_help="$full_help $ext_help"
 	done
 	
@@ -711,8 +711,9 @@ INFORMATION
 nn_servers_extend ()
 {
 	cd $core_dir/extraz/pluginz
+	full_help=""
 	# Check plugins for function
-	for plugin in $(ls); do
+	for plugin in *; do
 		pfunction=$(echo $1 |sed 's/\-/\\-/g')
 		string=$(egrep "$pfunction\)" $plugin)
 		if [[ "$string" != "" ]]; then
@@ -721,16 +722,15 @@ nn_servers_extend ()
 			echo -e "\nExecuting function from plugin: $plugin \n"
 			$core_dir/extraz/pluginz/./$plugin $1 $2 $3 $4
 			exit 0
-		else
-			#$core_dir/extraz/pluginz/./$plugin --ext_help
-			ext_help=$($core_dir/extraz/pluginz/$plugin --ext_help)
-			full_help="$full_help $ext_help"
+		#else
+			#ext_help=$($core_dir/extraz/pluginz/$plugin --help)
+			#full_help="$full_help $ext_help"
 		fi
 	done
 	
 	core_file=$(ls $core_dir |grep nst_core |tail -n1)
 	$core_dir/$core_file --help
-	echo "$full_help"
+	#echo "$full_help"
 	
 	#echo $plugin
 } # End nn_servers_extend

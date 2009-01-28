@@ -56,12 +56,8 @@ search_packs() {
 } # End search_packs
 
 # Extended Help
-nn_servers_ext_help ()
+help ()
 {
-	#cd $core_dir
-	#core_file=$(ls nst_core*.sh |egrep "[0-9]{6}" |sort -r |head -n 1)
-	#./$core_file --nn_servers_help
-	
 echo -e "\n
 +=========================+
 |  NSTP Search Functions  |
@@ -73,11 +69,11 @@ echo -e "\n
 						
 							[directory]:	(Optional) if you wan to use a folder other than ~/.nexuiz/data
 "
-} # End nn_servers_ext_help
+} # End help
 
 #set -- `echo "$1" | tr [:upper:] [:lower:]`
 case $1 in
   --search_packs) search_packs $2 $3;;	# Search packages for a string
-  --ext_help) nn_servers_ext_help;;		# command line parameter help
-  *) nn_servers_ext_help;;				# gigo
+  --help) help;;						# command line parameter help
+  *) help;;								# gigo
 esac

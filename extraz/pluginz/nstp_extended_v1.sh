@@ -185,13 +185,8 @@ search_packs() {
 } # End search_packs
 
 # Extended Help
-nn_servers_ext_help ()
+help ()
 {
-	# how about this hackjob?
-	#cd $core_dir
-	#core_file=$(ls nst_core*.sh |egrep "[0-9]{6}" |sort -r |head -n 1)
-	#./$core_file --nn_servers_help
-	
 echo -e "\n
 +==========================+
 |  NST Extended Functions  |
@@ -205,17 +200,17 @@ echo -e "\n
 						
 							[directory]:	(Optional) if you wan to use a folder other than ~/.nexuiz/data
 "
-} # End nn_servers_ext_help
+} # End help
 
 # Case swtich to filter params
 case $1 in
 
   --image_colorize) image_colorize $2 $3;;	# Updates your SVN install
-  --image_format) image_format $2 $3;;	# changes the format of a directory of images
-  --rcon_old) rcon_old $2 $3 $4 $5;;				# Updates your SVN install
+  --image_format) image_format $2 $3;;		# changes the format of a directory of images
+  --rcon_old) rcon_old $2 $3 $4 $5;;		# Updates your SVN install
   --update_nexuiz) update_nexuiz $2;;		# Updates your SVN install
   --compile_nexuiz) compile_nexuiz $2;;		# Compiles your SVN install
   --search_packs) search_packs $2 $3;;		# Search packages for a string
-  --ext_help) nn_servers_ext_help;;			# command line parameter help
-  *) nn_servers_ext_help;;					# gigo
+  --help) help;;							# command line parameter help
+  *) help;;									# gigo
 esac

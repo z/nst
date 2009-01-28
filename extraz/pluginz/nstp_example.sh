@@ -19,12 +19,8 @@ function example() {
 }
 
 # Extended Help
-nn_servers_ext_help ()
+help ()
 {
-	#cd $core_dir
-	#core_file=$(ls *.sh |grep nst_core |tail -n1)
-	#./$core_file --nn_servers_help
-	
 echo -e "\n
 +==============================+
 |  Extended Example Functions  |
@@ -32,11 +28,11 @@ echo -e "\n
 
 --example function [param 1] [param 2] [param 3]	An example of an extended function passing 3 parameters
 "
-} # End nn_servers_ext_help
+} # End help
 
 # Case swtich to filter params
 case $1 in
   --example) example $2 $3 $4;;		# Search packages for a string
-  --ext_help) nn_servers_ext_help;;			# command line parameter help
-  *) nn_servers_ext_help;;					# gigo
+  --help) help;;					# command line parameter help
+  *) help;;							# gigo
 esac
