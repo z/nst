@@ -534,7 +534,7 @@ nexst_shortcuts_add() {
 		# Add alias to .bashrc
 		echo -e "\nalias nexst='$core_dir/$core_file'" >> ~/.bashrc
 		# Alias NOW
-		echo "alias nexst='$core_dir/$core_file'"
+		echo -e "Restart bash or paste this to active the alias now:\nalias nexst='$core_dir/$core_file'"
 		# lock installation
 		touch $core_dir/install/lock
 	else
@@ -587,7 +587,8 @@ pack_nst() {
 	sed -i "s#$core_dir#nst#" nst_exclude
 	echo -e "\nnst_exclude" >> nst_exclude
 	echo -e "\nnst/.gitignore" >> nst_exclude
-	tar cvf nst-pack.tar * --exclude-from=nst_exclude
+	echo -e "\nnst/install/lock" >> nst_exclude
+	tar cvf nst-pack_$( date +%m%d%y ).tar * --exclude-from=nst_exclude
 	rm nst_exclude
 } # End pack_nst
 
