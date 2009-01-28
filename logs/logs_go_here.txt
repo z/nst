@@ -1,0 +1,1 @@
+Creating a folder for your server also redirects the logs here. Otherwise, logs are stored in the standard .nexuiz/data folder.

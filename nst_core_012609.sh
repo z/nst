@@ -112,7 +112,7 @@ start_server()
 				 ln -s $core_dir/config/serverz/$cfgname ~/.nexuiz/data/$cfgname
 			fi
 			echo -e "\n[Starting Server] $screenname"
-			# This can be hardcoded because it's where QuakeC puts them
+			# This can be hardcoded because it's where QuakeC puts them -- THIS NEEDS TO BE UPDATED
 			if [ ! -d ~/.nexuiz/data/data/oldlogs ];then mkdir -p ~/.nexuiz/data/data/oldlogs;fi
 			if [ -f ~/.nexuiz/data/data/$screenname*.log ]; then
 				mv ~/.nexuiz/data/data/$screenname*.log ~/.nexuiz/data/data/oldlogs
@@ -121,7 +121,13 @@ start_server()
 				echo -e " -- [No logs to archive for: $screenname]"
 			fi
 			
-			screen -m -d -S $screenname $basedir/./nexuiz-dedicated -game $screenname +exec $cfgname -userdir logs
+			# if there is a folder for this server in extraz/files -- start with that as the game dir
+			if [ -d $core_dir/extraz/files/$screenname ];then
+				screen -m -d -S $screenname $basedir/./nexuiz-dedicated -game $screenname +exec $cfgname -userdir logs
+			# otherwise use .nexuiz
+			else
+				screen -m -d -S $screenname $basedir/./nexuiz-dedicated +exec $cfgname
+			fi
 			
 			if [ "$auto_rcon" == "true" ]; then
 				rcon2irc_start $screenname
@@ -652,7 +658,7 @@ Inside the configuration file, the conventions continue.  To prevent log errors 
 
 sv_eventlog 1
 sv_eventlog_files 1
-sv_eventlog_files_nameprefix   \"ctf_242_\"
+sv_eventlog_files_nameprefix   \"local_ctf_\"
 
 A sample config is available for your convenience, 'local_ctf.cfg'
 
