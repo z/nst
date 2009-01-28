@@ -726,10 +726,11 @@ nn_servers_extend ()
 			ext_help=$($core_dir/extraz/pluginz/$plugin --ext_help)
 			full_help="$full_help $ext_help"
 		fi
-		core_file=$(ls $core_dir |grep nst_core |tail -n1)
-		$core_dir/$core_file --help
-		echo $full_help
 	done
+	
+	core_file=$(ls $core_dir |grep nst_core |tail -n1)
+	$core_dir/$core_file --help
+	echo $full_help
 	
 	#echo $plugin
 } # End nn_servers_extend
