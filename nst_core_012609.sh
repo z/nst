@@ -121,9 +121,7 @@ start_server()
 				echo -e " -- [No logs to archive for: $screenname]"
 			fi
 			
-			screen -m -d -S $screenname $basedir/./nexuiz-dedicated +exec $cfgname
-			# this isn't currently being used because you can tell the server to use a different progs.dat file in the cfg but what it would do is allow you to use a 'mod directory'
-			#screen -m -d -S $screenname ./nexuiz-dedicated +exec $cfgname -userdir $moddir
+			screen -m -d -S $screenname $basedir/./nexuiz-dedicated -game $screenname +exec $cfgname -userdir logs
 			
 			if [ "$auto_rcon" == "true" ]; then
 				rcon2irc_start $screenname
