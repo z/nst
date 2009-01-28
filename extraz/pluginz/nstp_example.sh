@@ -21,14 +21,14 @@ function example() {
 # Extended Help
 nn_servers_ext_help ()
 {
-	cd $core_dir
-	core_file=$(ls *.sh |grep nst_core |tail -n1)
-	./$core_file --nn_servers_help
+	#cd $core_dir
+	#core_file=$(ls *.sh |grep nst_core |tail -n1)
+	#./$core_file --nn_servers_help
 	
 echo "
-+======================+
-|  Extended Functions  |
-+======================+
++==============================+
+|  Extended Example Functions  |
++==============================+
 
 --example function [param 1] [param 2] [param 3]		An example of an extended function passing 3 parameters
 "

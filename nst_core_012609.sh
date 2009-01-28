@@ -718,9 +718,17 @@ nn_servers_extend ()
 		if [[ "$string" != "" ]]; then
 			# check if chmod +X
 			# execute script with parameter
+			echo -e "\nExecuting function from plugin: $plugin \n"
 			$core_dir/extraz/pluginz/./$plugin $1 $2 $3 $4
 			exit 0
+		else
+			#$core_dir/extraz/pluginz/./$plugin --ext_help
+			ext_help=$($core_dir/extraz/pluginz/$plugin --ext_help)
+			full_help="$full_help $ext_help"
 		fi
+		core_file=$(ls $core_dir |grep nst_core |tail -n1)
+		$core_dir/$core_file --help
+		echo $full_help
 	done
 	
 	#echo $plugin

@@ -58,14 +58,14 @@ search_packs() {
 # Extended Help
 nn_servers_ext_help ()
 {
-	cd $core_dir
-	core_file=$(ls nst_core*.sh |egrep "[0-9]{6}" |sort -r |head -n 1)
-	./$core_file --nn_servers_help
+	#cd $core_dir
+	#core_file=$(ls nst_core*.sh |egrep "[0-9]{6}" |sort -r |head -n 1)
+	#./$core_file --nn_servers_help
 	
 echo "
-+======================+
-|  Extended Functions  |
-+======================+
++=========================+
+|  NSTP Search Functions  |
++=========================+
 
 --search_packs [string] [directory]		Searches all packages in your data directory
 						

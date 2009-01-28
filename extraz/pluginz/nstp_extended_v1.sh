@@ -188,14 +188,14 @@ search_packs() {
 nn_servers_ext_help ()
 {
 	# how about this hackjob?
-	cd $core_dir
-	core_file=$(ls nst_core*.sh |egrep "[0-9]{6}" |sort -r |head -n 1)
-	./$core_file --nn_servers_help
+	#cd $core_dir
+	#core_file=$(ls nst_core*.sh |egrep "[0-9]{6}" |sort -r |head -n 1)
+	#./$core_file --nn_servers_help
 	
 echo "
-+======================+
-|  Extended Functions  |
-+======================+
++==========================+
+|  NST Extended Functions  |
++==========================+
 
 --install_nexuiz [directory]			This installs Nexuiz
 
