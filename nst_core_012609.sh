@@ -51,8 +51,10 @@
 # Globals
 ####################################################################
 
-# Needed to work with aliases
+# Needed to work with aliases in .bashrc
 core_dir=$(cd $(dirname $0); pwd)
+# Just in case we need to access self
+core_file=$(ls $core_dir |grep nst_core |tail -n1)
 
 # Include config
 source $core_dir/config/base.conf
@@ -580,6 +582,8 @@ install_nexuiz() {
 
 # This Packages NST for distribution
 pack_nst() {
+	# this function actually needs work... it'd be better NOT to package with the NST folder
+	
 	# get a list of all the files 
 	cd $core_dir
 	cd ..
@@ -593,7 +597,7 @@ pack_nst() {
 } # End pack_nst
 
 # Routes Help Functions based on whether extend = true or not
-nn_servers_help_router ()
+nst_help_all ()
 {
 	cd $core_dir/extraz/pluginz
 	
@@ -602,14 +606,13 @@ nn_servers_help_router ()
 		full_help="$full_help $ext_help"
 	done
 	
-	core_file=$(ls $core_dir |grep nst_core |tail -n1)
-	nn_servers_help
-	echo "$full_help"
+	nst_help 			# nst help
+	echo "$full_help"	# plugin help
 	
-} # nn_servers_help_router
+} # nst_help_all
 
 # The Help Function for NsT
-nn_servers_help ()
+nst_help ()
 {
 echo "
 
@@ -644,7 +647,8 @@ Nexuiz Server Toolz is a collection of helpful scripts to help admins manage the
 
 This script identifies your servers by the configs located in your \"config/serverz\" directory.  Furthermore, the name of the screen is constructed by the next token ending at .cfg.  That is: ([A-Za-z0-9_-]+).cfg
 
-Example cfg name: ctf_242.cfg
+Example cfg name: local_ctf.cfg
+Screen name:      local_ctf
 
 Inside the configuration file, the conventions continue.  To prevent log errors when restarting servers, set the following cvars, replacing 'ctf_242_' with your corresponding server name.  eventlog is also the format read by the statistics parser, so if you are utilizing that feature, you're killing two birds with one stone.
 
@@ -652,10 +656,10 @@ sv_eventlog 1
 sv_eventlog_files 1
 sv_eventlog_files_nameprefix   \"ctf_242_\"
 
-A sample config is available for your convenience, 'nn_server_example.cfg'
+A sample config is available for your convenience, 'local_ctf.cfg'
 
 
-General Usage: ./nn_server_toolz.sh --(start[_all]|stop[_all]|restart[_all]|view|edit|list|rcon2irc|create_maplist|help)
+General Usage: nexst --(start_all|stop_all|restart_all|start <server>|stop <server>|restart <server>|list|view <server>|edit <server>|rcon2irc (start |stop|restart|view) <server>|create_maplist <gametype>|install_nst|uninstall_nst|install_nexuiz|pack_nst|help)
 
 options are...
 
@@ -717,13 +721,12 @@ INFORMATION
 
 --help							You're lookin at it :-P - Thanks to Soulbringer for this case switch/framework.
 "
-} # End nn_servers_help
+} # End nst_help
 
 # Routes parameters not found in the core to plugin files
-nn_servers_extend ()
+nst_extend ()
 {
 	cd $core_dir/extraz/pluginz
-	full_help=""
 	# Check plugins for function
 	for plugin in *; do
 		pfunction=$(echo $1 |sed 's/\-/\\-/g')
@@ -734,18 +737,13 @@ nn_servers_extend ()
 			echo -e "\nExecuting function from plugin: $plugin \n"
 			$core_dir/extraz/pluginz/./$plugin $1 $2 $3 $4
 			exit 0
-		#else
-			#ext_help=$($core_dir/extraz/pluginz/$plugin --help)
-			#full_help="$full_help $ext_help"
 		fi
 	done
 	
-	core_file=$(ls $core_dir |grep nst_core |tail -n1)
-	$core_dir/$core_file --help
-	#echo "$full_help"
-	
-	#echo $plugin
-} # End nn_servers_extend
+	# function not found, display help for all
+	nst_help_all
+
+} # End nst_extend
 
 # Case swtich to filter params
 case $1 in
@@ -765,7 +763,7 @@ case $1 in
   --uninstall_nst) uninstall_nst;;			# Uninstalls / configures NST easily
   --install_nexuiz) install_nexuiz;;		# Installs Nexuiz from SVN
   --pack_nst) pack_nst;;					# Packs NST for distribution
-  --help) nn_servers_help_router;;			# command line parameter help
-  --nn_servers_help) nn_servers_help;;		# Pure nn_servers_help
-  *) nn_servers_extend $1 $2 $3 $4;;		# pass off to extend function if no flag is found
+  --help) nst_help_all;;					# command line parameter help
+  --nst_help) nst_help;;					# Pure nst_help
+  *) nst_extend $1 $2 $3 $4;;				# pass off to extend function if no flag is found
 esac # End case switch

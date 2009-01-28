@@ -4,7 +4,7 @@
 # Created By: Tyler "-z-" Mulligan of the Nexuiz Ninjaz (www.nexuizninjaz.com)
 #
 # This script is an extension of the Nexuiz Server Toolz script to help
-# manage game servers.  This file is included when you run NST if extend=true.
+# manage game servers.
 #
 
 # Needed to work with aliases
