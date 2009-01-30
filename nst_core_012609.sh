@@ -315,7 +315,7 @@ function rcon2irc_start {
 		# If an rcon2irc config exists, start it.
 		if [ -f $core_dir/config/servers/rcon2irc/$confname ]; then	
 			echo -e "[Starting rcon2irc bot] $screenname\n"
-			screen -m -d -S rcon_$screenname /usr/bin/perl $basedir server/rcon2irc/rcon2irc.pl $core_dir/config/servers/rcon2irc/$confname
+			screen -m -d -S rcon_$screenname /usr/bin/perl $basedir/server/rcon2irc/rcon2irc.pl $core_dir/config/servers/rcon2irc/$confname
 		else
 			echo -e "\n -- [tip] If you create a file in your '$core_dir/config/servers/rcon2irc' folder called '$confname' per div's rcon2irc requirements, it will automatically be loaded.\n"
 		fi
