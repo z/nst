@@ -125,9 +125,13 @@ start_server()
 				if [ ! -d $basedir/logs ]; then
 					ln -s $core_dir/logs $basedir/logs
 				fi
-				# symlink logs if it isn't already
+				# symlink global if it isn't already
 				if [ ! -d $basedir/global ]; then
 					ln -s $core_dir/extraz/files/global $basedir/global
+				fi
+				# symlink common if it isn't already
+				if [ ! -d $basedir/common ]; then
+					ln -s $core_dir/config/serverz/common $basedir/common
 				fi
 			else
 				if [ ! -f ~/.nexuiz/data/$cfgname ]; then
@@ -148,7 +152,7 @@ start_server()
 			
 			# if there is a folder for this server in extraz/files -- start with that as the game dir
 			if [ -d $core_dir/extraz/files/$screenname ];then
-				screen -m -d -S $screenname $basedir/./nexuiz-dedicated -game global -game $screenname +exec $cfgname -userdir logs
+				screen -m -d -S $screenname $basedir/./nexuiz-dedicated -game global -game common -game $screenname +exec $cfgname -userdir logs
 			# otherwise use .nexuiz
 			else
 				screen -m -d -S $screenname $basedir/./nexuiz-dedicated +exec $cfgname
@@ -616,7 +620,7 @@ pack_nst() {
 	# get a list of all the files 
 	cd $core_dir
 	cd ..
-	find $core_dir ! -type f -print | egrep 'svn|Nexuiz_SVN_.*|\.git.*|serverz.*offline' > nst_exclude
+	find $core_dir ! -type f -print | egrep 'svn|Nexuiz_SVN_.*|\.git.*|serverz.*offline|offline|map_pool*|local_ctf|logs/.*' > nst_exclude
 	sed -i "s#$core_dir#nst#" nst_exclude
 	echo -e "\nnst_exclude" >> nst_exclude
 	echo -e "\nnst/.gitignore" >> nst_exclude
