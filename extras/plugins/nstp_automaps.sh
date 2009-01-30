@@ -23,14 +23,14 @@ function maps2server() {
 	if [ "$2" != "" ]; then
 		d=$2
 	else
-		echo -e "\n[FAIL] No servername has been set, please set it and try again.  You need to have a directory by that name in your extraz/files directory."
+		echo -e "\n[FAIL] No servername has been set, please set it and try again.  You need to have a directory by that name in your extras/files directory."
 		exit 0
 	fi
 	
 	# Get the a list of all properly packaged bsps
-	cd $core_dir/extraz/map_pool
+	cd $core_dir/extras/map_pool
 	for map in $(ls *.pk3); do
-		cd $core_dir/extraz/map_pool
+		cd $core_dir/extras/map_pool
 		
 		# Used to tell if the package mapinfo and generate map info exist
 		m=false
@@ -86,7 +86,7 @@ function maps2server() {
 			# Everything looks good, add it to the list.
 			if [ "$game_type" != "" ]; then
 				echo "[LINKING] $mapname"
-				ln -s $core_dir/extraz/map_pool/$map $core_dir/extraz/files/$d/$map
+				ln -s $core_dir/extras/map_pool/$map $core_dir/extras/files/$d/$map
 			else
 				if [ $m2 == true ]; then
 					echo "Checking generated mapinfo for gametype compatiability ($t): [NO]"

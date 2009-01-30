@@ -84,7 +84,7 @@ start_all()
 	# for each moddir find configs and load them into screens
 
 	# List any nn_server configs found
-	for cfg in $(ls $core_dir/config/serverz/*.cfg); do
+	for cfg in $(ls $core_dir/config/servers/*.cfg); do
 		cfgname=$(echo $cfg | awk -F/ '{print $NF}')
 		screenname=$(echo $cfgname | awk -F . '{ print $1 }')
 		
@@ -110,16 +110,16 @@ start_server()
 		cd $basedir
 		
 		# attempt to load the cfg based on the name of the server
-		if [ -f $core_dir/config/serverz/$cfgname ]; then
+		if [ -f $core_dir/config/servers/$cfgname ]; then
 			
 			# check to see if there is a corresponding files directory for this server
-			if [ -d $core_dir/extraz/files/$screenname ]; then
+			if [ -d $core_dir/extras/files/$screenname ]; then
 				if [ ! -d $basedir/$screenname ]; then
-					ln -s $core_dir/extraz/files/$screenname $basedir/$screenname
+					ln -s $core_dir/extras/files/$screenname $basedir/$screenname
 				fi
 				# make a symlink to the cfg if there isn't one already
-				if [ ! -f $core_dir/extraz/files/$screenname/$cfgname ]; then
-					ln -s $core_dir/config/serverz/$cfgname $core_dir/extraz/files/$screenname/$cfgname
+				if [ ! -f $core_dir/extras/files/$screenname/$cfgname ]; then
+					ln -s $core_dir/config/servers/$cfgname $core_dir/extras/files/$screenname/$cfgname
 				fi
 				# symlink logs if it isn't already
 				if [ ! -d $basedir/logs ]; then
@@ -127,15 +127,15 @@ start_server()
 				fi
 				# symlink global if it isn't already
 				if [ ! -d $basedir/global ]; then
-					ln -s $core_dir/extraz/files/global $basedir/global
+					ln -s $core_dir/extras/files/global $basedir/global
 				fi
 				# symlink common if it isn't already
 				if [ ! -d $basedir/common ]; then
-					ln -s $core_dir/config/serverz/common $basedir/common
+					ln -s $core_dir/config/servers/common $basedir/common
 				fi
 			else
 				if [ ! -f ~/.nexuiz/data/$cfgname ]; then
-					ln -s $core_dir/config/serverz/$cfgname ~/.nexuiz/data/$cfgname
+					ln -s $core_dir/config/servers/$cfgname ~/.nexuiz/data/$cfgname
 				fi
 			fi
 			
@@ -150,8 +150,8 @@ start_server()
 				echo -e " -- [No logs to archive for: $screenname]"
 			fi
 			
-			# if there is a folder for this server in extraz/files -- start with that as the game dir
-			if [ -d $core_dir/extraz/files/$screenname ];then
+			# if there is a folder for this server in extras/files -- start with that as the game dir
+			if [ -d $core_dir/extras/files/$screenname ];then
 				screen -m -d -S $screenname $basedir/./nexuiz-dedicated -game global -game common -game $screenname +exec $cfgname -userdir logs
 			# otherwise use .nexuiz
 			else
@@ -162,7 +162,7 @@ start_server()
 				rcon2irc_start $screenname
 			fi
 		else
-			echo -e "\n[ERROR] Config: $cfgname not found in $core_dir/config/serverz\n"
+			echo -e "\n[ERROR] Config: $cfgname not found in $core_dir/config/servers\n"
 		fi
 	# No server name was passed
 	else
@@ -174,7 +174,7 @@ stop_all()
 {
 	list_servers
 	echo -e "\n[Stopping All]\n"
-	for cfg in $(ls $core_dir/config/serverz/*.cfg); do
+	for cfg in $(ls $core_dir/config/servers/*.cfg); do
 		cfgname=$(echo $cfg | awk -F/ '{print $NF}')
 		screenname=$(echo $cfgname | awk -F . '{ print $1 }')
 		
@@ -250,8 +250,8 @@ list_servers() # Format all the current running servers in a easy to read way
 		ps -ef | grep nexuiz-dedicated | grep SCREEN | grep -v grep | awk '{printf "%s %s\n", $2, $12}' | while read gspid gsname
 		do
 			gscfg=$(echo $gsname | sed "s/\(.*\)/\1.cfg/")
-			gsport=$(grep ^port -r $core_dir/config/serverz/${gscfg} | awk '{ print $2 }')
-			gsaddress=$(grep ^net_address -r $core_dir/config/serverz/${gscfg} | awk '{ print $2 }')
+			gsport=$(grep ^port -r $core_dir/config/servers/${gscfg} | awk '{ print $2 }')
+			gsaddress=$(grep ^net_address -r $core_dir/config/servers/${gscfg} | awk '{ print $2 }')
 			if [ "$gsaddress" == "" ]; then gsaddress="$base_address"; fi
 			if [ "$qstat_enabled" == true ]; then
 				gsplayers=$(qstat -P -nexuizs $gsaddress:$gsport | head -n 2 | tail -n 1 | awk '{ print $2 }')
@@ -272,7 +272,7 @@ list_servers() # Format all the current running servers in a easy to read way
 	else
 		echo -e "\n[WARNING] No Nexuiz servers are currently running"
 		echo -e "\n[ATTENTION] Here's a list of available cfgs:\n"
-		ls $core_dir/config/serverz/ |grep .cfg
+		ls $core_dir/config/servers/ |grep .cfg
 		echo
 	fi
 } # End list_servers
@@ -313,11 +313,11 @@ function rcon2irc_start {
 		screenname=$1
 		confname="$screenname.conf"
 		# If an rcon2irc config exists, start it.
-		if [ -f $core_dir/config/serverz/rcon2irc/$confname ]; then	
+		if [ -f $core_dir/config/servers/rcon2irc/$confname ]; then	
 			echo -e "[Starting rcon2irc bot] $screenname\n"
-			screen -m -d -S rcon_$screenname /usr/bin/perl $basedir server/rcon2irc/rcon2irc.pl $core_dir/config/serverz/rcon2irc/$confname
+			screen -m -d -S rcon_$screenname /usr/bin/perl $basedir server/rcon2irc/rcon2irc.pl $core_dir/config/servers/rcon2irc/$confname
 		else
-			echo -e "\n -- [tip] If you create a file in your '$core_dir/config/serverz/rcon2irc' folder called '$confname' per div's rcon2irc requirements, it will automatically be loaded.\n"
+			echo -e "\n -- [tip] If you create a file in your '$core_dir/config/servers/rcon2irc' folder called '$confname' per div's rcon2irc requirements, it will automatically be loaded.\n"
 		fi
 	else
 		echo -e "\nSyntax is: --rcon2irc start <server name>\n\n<server name> is built from your server cfg file name.\n\"ctf_242.cfg\" would be titled \"ctf_242\".\nType --help for more.\n"
@@ -355,7 +355,7 @@ function rcon2irc_restart {
 
 # Restarts all rcon2irc servers
 function rcon2irc_restart_all {
-	for conf in $(ls $core_dir/config/serverz/rcon2irc/*.conf); do
+	for conf in $(ls $core_dir/config/servers/rcon2irc/*.conf); do
 		rcon2irc_restart $conf
 	done
 } # End rcon2irc_restart_all
@@ -380,8 +380,8 @@ rcon() { # LITTLE BROKEN RIGHT NOW
 	servername=$(echo $* | awk '{ print $2 }')
 	
 	# get server login info
-	head -n3 $core_dir/config/serverz/rcon2irc/$servername\.conf | tail -n2 | sed 's/ = /=/' > $core_dir/config/serverz/rcon2irc/temp_rcon.conf
-	source $core_dir/config/serverz/rcon2irc/temp_rcon.conf
+	head -n3 $core_dir/config/servers/rcon2irc/$servername\.conf | tail -n2 | sed 's/ = /=/' > $core_dir/config/servers/rcon2irc/temp_rcon.conf
+	source $core_dir/config/servers/rcon2irc/temp_rcon.conf
 
 	#shopt -s extglob
 	#while IFS= read -r LINE; do
@@ -402,7 +402,7 @@ rcon() { # LITTLE BROKEN RIGHT NOW
 	rcon_address=$dp_server rcon_password=$dp_password $basedir/server/./rcon.pl "$command"
 	
 	#cleanup
-	rm $core_dir/config/serverz/rcon2irc/temp_rcon.conf
+	rm $core_dir/config/servers/rcon2irc/temp_rcon.conf
 }
 
 ###############
@@ -414,7 +414,7 @@ function edit_server {
 	if [ "$1" != "" ]; then
 		gsname=$1
 	
-		$default_editor $core_dir/config/serverz/$1.cfg
+		$default_editor $core_dir/config/servers/$1.cfg
 		echo "Do you want to restart this server now (y/n)?"
 		read answer
 		if [ "$answer" == "y" ]; then
@@ -620,7 +620,7 @@ pack_nst() {
 	# get a list of all the files 
 	cd $core_dir
 	cd ..
-	find $core_dir ! -type f -print | egrep 'svn|Nexuiz_SVN_.*|\.git.*|serverz.*offline|offline|map_pool*|local_ctf|logs/.*' > nst_exclude
+	find $core_dir ! -type f -print | egrep 'svn|Nexuiz_SVN_.*|\.git.*|servers.*offline|offline|map_pool*|local_ctf|logs/.*' > nst_exclude
 	sed -i "s#$core_dir#nst#" nst_exclude
 	echo -e "\nnst_exclude" >> nst_exclude
 	echo -e "\nnst/.gitignore" >> nst_exclude
@@ -632,10 +632,10 @@ pack_nst() {
 # Routes Help Functions based on whether extend = true or not
 nst_help_all ()
 {
-	cd $core_dir/extraz/pluginz
+	cd $core_dir/extras/plugins
 	
 	for plugin in $(ls); do
-		ext_help=$($core_dir/extraz/pluginz/$plugin --help)
+		ext_help=$($core_dir/extras/plugins/$plugin --help)
 		full_help="$full_help $ext_help"
 	done
 	
@@ -674,11 +674,11 @@ echo "
 
 SYNOPSIS
 
-Nexuiz Server Toolz is a collection of helpful scripts to help admins manage their Nexuiz game servers.  Following the methodology of Ruby on Rails, these scripts believe in convention over configuration.  This means using such devices as the \"config/serverz\" folder to tell this script where your servers are, instead of the classic \"configuration\" file which is edited manually.  Less work for you!  Easy to upgrade, easy to scale, easy to manage.
+Nexuiz Server Toolz is a collection of helpful scripts to help admins manage their Nexuiz game servers.  Following the methodology of Ruby on Rails, these scripts believe in convention over configuration.  This means using such devices as the \"config/servers\" folder to tell this script where your servers are, instead of the classic \"configuration\" file which is edited manually.  Less work for you!  Easy to upgrade, easy to scale, easy to manage.
 
 :::IMPORTANT USAGE NOTES:::
 
-This script identifies your servers by the configs located in your \"config/serverz\" directory.  Furthermore, the name of the screen is constructed by the next token ending at .cfg.  That is: ([A-Za-z0-9_-]+).cfg
+This script identifies your servers by the configs located in your \"config/servers\" directory.  Furthermore, the name of the screen is constructed by the next token ending at .cfg.  That is: ([A-Za-z0-9_-]+).cfg
 
 Example cfg name: local_ctf.cfg
 Screen name:      local_ctf
@@ -702,7 +702,7 @@ options are...
 
 SERVER MANAGEMENT
 
---start_all						Starts all servers identified by a \"([A-Za-z0-9_-]+).cfg\" file inside 'config/serverz'.
+--start_all						Starts all servers identified by a \"([A-Za-z0-9_-]+).cfg\" file inside 'config/servers'.
 							It starts servers inside screens, using the token denoted by the () above
 							to title it.  If the cfg was titled \"ctf_242.cfg\", the screen would be titled \"ctf_242\".
 						
@@ -759,7 +759,7 @@ INFORMATION
 # Routes parameters not found in the core to plugin files
 nst_extend ()
 {
-	cd $core_dir/extraz/pluginz
+	cd $core_dir/extras/plugins
 	# Check plugins for function
 	for plugin in *; do
 		pfunction=$(echo $1 |sed 's/\-/\\-/g')
@@ -768,7 +768,7 @@ nst_extend ()
 			# check if chmod +X
 			# execute script with parameter
 			echo -e "\nExecuting function from plugin: $plugin \n"
-			$core_dir/extraz/pluginz/./$plugin $1 $2 $3 $4
+			$core_dir/extras/plugins/./$plugin $1 $2 $3 $4
 			exit 0
 		fi
 	done

@@ -58,12 +58,12 @@ image_format() {
 }
 
 rcon_old() {
-	head -n3 $core_dir/config/serverz/rcon2irc/$1\.conf | tail -n2 | sed 's/ = /=/' > $core_dir/config/serverz/rcon2irc/temp_rcon.conf
-	source $core_dir/config/serverz/rcon2irc/temp_rcon.conf
+	head -n3 $core_dir/config/servers/rcon2irc/$1\.conf | tail -n2 | sed 's/ = /=/' > $core_dir/config/servers/rcon2irc/temp_rcon.conf
+	source $core_dir/config/servers/rcon2irc/temp_rcon.conf
 	echo "rcon to: $dp_server"
 	#echo "execing command: "rcon_address=$dp_server rcon_password=$dp_password $basedir/Docs/server/./rcon.pl "$2 $3 $4"
 	rcon_address=$dp_server rcon_password=$dp_password $basedir/Docs/server/./rcon.pl "$2 $3 $4"
-	rm $core_dir/config/serverz/rcon2irc/temp_rcon.conf
+	rm $core_dir/config/servers/rcon2irc/temp_rcon.conf
 }
 
 

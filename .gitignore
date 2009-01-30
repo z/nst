@@ -2,9 +2,9 @@ install/lock
 nexuiz/svn/*
 nexuiz/Nexuiz_SVN_*
 nexuiz/compile_nexuiz_svn.log
-config/serverz/offline
-config/serverz/rcon2irc/offline
-extraz/files/global/*.pk3
-extraz/files/local_ctf
-extraz/map_pool
+config/servers/offline
+config/servers/rcon2irc/offline
+extras/files/global/*.pk3
+extras/files/local_ctf
+extras/map_pool
 logs/local_ctf
