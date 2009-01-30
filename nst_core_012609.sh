@@ -106,13 +106,37 @@ start_server()
 			exit 1
 		fi
 		
+		# change to basedir so nexuiz can be executed and load cfgs without freaking out
 		cd $basedir
 		
+		# attempt to load the cfg based on the name of the server
 		if [ -f $core_dir/config/serverz/$cfgname ]; then
-			if [ ! -f ~/.nexuiz/data/$cfgname ]; then
-				 ln -s $core_dir/config/serverz/$cfgname ~/.nexuiz/data/$cfgname
+			
+			# check to see if there is a corresponding files directory for this server
+			if [ -d $core_dir/extraz/files/$screenname ]; then
+				if [ ! -d $basedir/$screenname ]; then
+					ln -s $core_dir/extraz/files/$screenname $basedir/$screenname
+				fi
+				# make a symlink to the cfg if there isn't one already
+				if [ ! -f $core_dir/extraz/files/$screenname/$cfgname ]; then
+					ln -s $core_dir/config/serverz/$cfgname $core_dir/extraz/files/$screenname/$cfgname
+				fi
+				# symlink logs if it isn't already
+				if [ ! -d $basedir/logs ]; then
+					ln -s $core_dir/logs $basedir/logs
+				fi
+				# symlink logs if it isn't already
+				if [ ! -d $basedir/global ]; then
+					ln -s $core_dir/extraz/files/global $basedir/global
+				fi
+			else
+				if [ ! -f ~/.nexuiz/data/$cfgname ]; then
+					ln -s $core_dir/config/serverz/$cfgname ~/.nexuiz/data/$cfgname
+				fi
 			fi
+			
 			echo -e "\n[Starting Server] $screenname"
+			
 			# This can be hardcoded because it's where QuakeC puts them -- THIS NEEDS TO BE UPDATED
 			if [ ! -d ~/.nexuiz/data/data/oldlogs ];then mkdir -p ~/.nexuiz/data/data/oldlogs;fi
 			if [ -f ~/.nexuiz/data/data/$screenname*.log ]; then
@@ -124,7 +148,7 @@ start_server()
 			
 			# if there is a folder for this server in extraz/files -- start with that as the game dir
 			if [ -d $core_dir/extraz/files/$screenname ];then
-				screen -m -d -S $screenname $basedir/./nexuiz-dedicated -game $screenname +exec $cfgname -userdir logs
+				screen -m -d -S $screenname $basedir/./nexuiz-dedicated -game global -game $screenname +exec $cfgname -userdir logs
 			# otherwise use .nexuiz
 			else
 				screen -m -d -S $screenname $basedir/./nexuiz-dedicated +exec $cfgname
