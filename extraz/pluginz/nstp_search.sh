@@ -15,11 +15,8 @@
 # todo - make search string qouted or reverse parameters
 #
 
-# Needed to work with aliases
-core_dir=$(cd $(dirname $0); pwd | sed 's#/extraz/pluginz##')
-
-# Include config
-source $core_dir/config/base.conf
+# include the global shiz
+source plugin.inc
 
 # Search packs searches all packages in your data directory
 search_packs() {

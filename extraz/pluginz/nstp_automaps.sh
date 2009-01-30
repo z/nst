@@ -6,11 +6,8 @@
 # This plugin automates some of the map mangaging process
 #
 
-# Needed to work with aliases
-core_dir=$(cd $(dirname $0); pwd | sed 's#/extraz/pluginz##')
-
-# Include config
-source $core_dir/config/base.conf
+# include the global shiz
+source plugin.inc
 
 # Example function
 function maps2server() {

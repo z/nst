@@ -105,6 +105,7 @@ start_server()
 			echo -e "\n[FAIL] The basedir '$basedir' is incorrect, please edit your config and try again.\n"
 			exit 1
 		fi
+		
 		cd $basedir
 		
 		if [ -f $core_dir/config/serverz/$cfgname ]; then
