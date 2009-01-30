@@ -4,6 +4,7 @@ nexuiz/Nexuiz_SVN_*
 nexuiz/compile_nexuiz_svn.log
 config/serverz/offline
 config/serverz/rcon2irc/offline
-extraz/files
+extraz/files/global/*.pk3
+extraz/files/local_ctf
 extraz/map_pool
 logs/local_ctf
