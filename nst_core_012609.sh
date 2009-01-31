@@ -558,13 +558,33 @@ install_nst() {
 uninstall_nst() {
 	nexst_shortcuts_remove
 	# remove files?
+	echo "Do you want to remove all files (including Nexuiz and any configs you have in NST) now (y/n)?"
+	read answer
+	if [[ "$answer" == "y" ]]; then
+		remove_nexuiz
+		remove_nst
+	else
+		echo -e "\n[alert] Not removing files."
+	fi
 } # End uninstall_nst
+
+# This removes all NST files
+remove_nst() {
+	echo "Removing NST files"
+} # End remove_nst
+
+# This Packages NST for distribution
+pack_nst() {
+	cd $core_dir
+	find $core_dir -type f -print | egrep -v 'offline|svn|Nexuiz_SVN_.*|install/lock|logs/.*/|\.git|\.pk3|\.tar|tarlist.txt' | sed "s#$core_dir/##" > tarlist.txt
+	xargs tar cvf nst-pack_$( date +%m%d%y ).tar < tarlist.txt
+	rm tarlist.txt
+} # End pack_nst
 
 # Post installation shortcuts
 nexst_shortcuts_add() {
 	if [[ ! -f $core_dir/install/lock ]]; then
 		#core_file=$(ls $core_dir/nst_core*.sh |egrep "[0-9]{6}" |sort -r |head -n 1)
-		core_file=$(ls $core_dir |grep nst_core |tail -n1)
 		echo -e "\nAdding alias \"nexst\" to .bashrc\n"
 		# Add alias to .bashrc
 		echo -e "\nalias nexst='$core_dir/$core_file'" >> ~/.bashrc
@@ -580,7 +600,6 @@ nexst_shortcuts_add() {
 # Uninstall shortcuts
 nexst_shortcuts_remove() {
 	if [[ -f ~/.bashrc ]]; then
-		core_file=$(ls $core_dir |grep nst_core |tail -n1)
 		echo -e "\nRemoving alias \"nexst\" from .bashrc\n"
 		# Remove alias from .bashrc
 		sed -i 's/alias nexst.*//g' ~/.bashrc
@@ -613,13 +632,10 @@ install_nexuiz() {
 	fi
 } # End install_nexuiz
 
-# This Packages NST for distribution
-pack_nst() {
-	cd $core_dir
-	find $core_dir -type f -print | egrep -v 'offline|svn|Nexuiz_SVN_.*|install/lock|logs/.*/|\.git|\.pk3|\.tar|tarlist.txt' | sed "s#$core_dir/##" > tarlist.txt
-	xargs tar cvf nst-pack_$( date +%m%d%y ).tar < tarlist.txt
-	rm tarlist.txt
-} # End pack_nst
+# This removes Nexuiz
+remove_nexuiz() {
+	echo "Removing Nexuiz"
+} # End remove_nexuiz
 
 # Routes Help Functions based on whether extend = true or not
 nst_help_all ()
