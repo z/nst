@@ -281,7 +281,8 @@ function view_server {
 		gsname=$1
 		
 		screenid=$(screen -ls | grep $gsname | awk '{ print $1 }' | grep \.$gsname$ | grep -v "rcon_" | awk -F . '{ print $1 }')
-		echo -e "\n!!!IMPORTANT!!! To get out of a screen, hold ctrl, then press a, then d\n\nPress enter to continue"
+		echo -e "\n!!!IMPORTANT!!! To get out of a screen, hold ctrl, then press a, then d"
+		echo -e "\n!!!IMPORTANT!!! To scroll, hold ctrl, then press a, then esc\n\nPress enter to continue"
 		read # pause until message is acknowledged
 		screen -r ${screenid}
 	else
@@ -379,7 +380,8 @@ function rcon2irc_view {
 	if [[ "$1" != "" ]]; then
 		gsname=$1
 		screenid=$(screen -ls | grep $gsname | awk '{ print $1 }' | grep \.$gsname$ | grep "rcon_" | awk -F . '{ print $1 }')
-		echo -e "\n!!!IMPORTANT!!! To get out of a screen, hold ctrl, then press a, then d\n\nPress enter to continue"
+		echo -e "\n!!!IMPORTANT!!! To get out of a screen, hold ctrl, then press a, then d"
+		echo -e "\n!!!IMPORTANT!!! To scroll, hold ctrl, then press a, then esc\n\nPress enter to continue"
 		read
 		screen -r ${screenid}
 	else
@@ -390,7 +392,6 @@ function rcon2irc_view {
 # Passes rcon commands to the server based on the rcon2irc conf
 rcon() { # LITTLE BROKEN RIGHT NOW
 	# server name
-	#servername="nns_ctf_light"
 	servername=$(echo $* | awk '{ print $2 }')
 	
 	# get server login info
