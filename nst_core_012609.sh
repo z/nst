@@ -72,6 +72,7 @@ start_all()
 	}
 	
 	# This can be hardcoded because it's where QuakeC puts them unless -userdir flag is set
+	# Needs a major update to support userdir
 	if [[ ! -d ~/.nexuiz/data/data/oldlogs ]];then mkdir -p ~/.nexuiz/data/data/oldlogs;fi
 
 	# check if basedir exists
@@ -80,8 +81,6 @@ start_all()
 		exit 1
 	fi
 	cd $basedir
-
-	# for each moddir find configs and load them into screens
 
 	# List any nn_server configs found
 	for cfg in $(ls $core_dir/config/servers/*.cfg); do
@@ -133,7 +132,7 @@ start_server()
 				if [[ ! -d $basedir/common ]]; then
 					ln -s $core_dir/config/servers/common $basedir/common
 				fi
-			else
+			else # No files directory -- execute from ~/.nexuiz/data/
 				if [[ ! -f ~/.nexuiz/data/$cfgname ]]; then
 					ln -s $core_dir/config/servers/$cfgname ~/.nexuiz/data/$cfgname
 				fi
@@ -153,7 +152,7 @@ start_server()
 			# if there is a folder for this server in extras/files -- start with that as the game dir
 			if [[ -d $core_dir/extras/files/$screenname ]];then
 				screen -m -d -S $screenname $basedir/./nexuiz-dedicated -game global -game common -game $screenname +exec $cfgname -userdir logs
-			# otherwise use .nexuiz
+			# otherwise use ~/.nexuiz/data
 			else
 				screen -m -d -S $screenname $basedir/./nexuiz-dedicated +exec $cfgname
 			fi
@@ -191,7 +190,6 @@ stop_server()
 		requested=$(ps -ef | grep SCREEN | grep nexuiz-dedicated | grep -v grep | awk '{ print $12 }' | grep ^${gsname}$)
 
 		if [[ "$requested" != "" ]]; then
-			#pid=$(ps -ef | grep SCREEN | grep nexuiz-dedicated | grep -v grep | grep "+exec *\/.*${gsname}.cfg" | awk '{ print $2 }')
 			pid=$(ps -ef | grep SCREEN | grep nexuiz-dedicated | grep -v grep | grep "+exec ${gsname}.cfg" | awk '{ print $2 }')
 			pkill -P $pid
 			if [[ "$auto_rcon" == "true" ]]; then
@@ -301,9 +299,11 @@ function rcon2irc_router {
 	  start) rcon2irc_start $2;;				# start a specific rcon2irc bot
 	  stop) rcon2irc_stop $2;;					# stop a specific rcon2irc bot
 	  restart) rcon2irc_restart $2;;			# restart a specific rcon2irc bot
+	  start_all) rcon2irc_start_all;;			# starts all rcon2irc bots
+	  stop_all) rcon2irc_stop_all;;				# stops all rcon2irc bots
 	  restart_all) rcon2irc_restart_all;;		# restarts all rcon2irc bots
 	  view) rcon2irc_view $2;;					# view a specific rcon2irc bot
-	  *) echo -e "nah, that's not a function";;
+	  *) echo -e "\nOptions are: (start|stop|restart|start_all|stop_all|restart_all|view)\n";;
 	esac
 }
 
@@ -352,6 +352,20 @@ function rcon2irc_restart {
 		echo -e "\nSyntax is: --rcon2irc restart <server name>\n\n<server name> is built from your server cfg file name.\n\"ctf_242.cfg\" would be titled \"ctf_242\".\nType --help for more.\n"
 	fi
 } # End rcon2irc_restart
+
+# Starts all rcon2irc servers
+function rcon2irc_start_all {
+	for conf in $(ls $core_dir/config/servers/rcon2irc/*.conf); do
+		rcon2irc_start $conf
+	done
+} # End rcon2irc_start_all
+
+# Stops all rcon2irc servers
+function rcon2irc_stop_all {
+	for conf in $(ls $core_dir/config/servers/rcon2irc/*.conf); do
+		rcon2irc_stop $conf
+	done
+} # End rcon2irc_stop_all
 
 # Restarts all rcon2irc servers
 function rcon2irc_restart_all {
@@ -700,7 +714,7 @@ sv_eventlog_files_nameprefix   \"local_ctf_\"
 A sample config is available for your convenience, 'local_ctf.cfg'
 
 
-General Usage: nexst --(start_all|stop_all|restart_all|start <server>|stop <server>|restart <server>|list|view <server>|edit <server>|rcon2irc (start |stop|restart|view) <server>|create_maplist <gametype>|install_nst|uninstall_nst|install_nexuiz|pack_nst|help)
+General Usage: nexst --(start_all|stop_all|restart_all|start <server>|stop <server>|restart <server>|list|view <server>|edit <server>|rcon2irc (start|stop|restart|start_all|stop_all|restart_all|view) <server>|create_maplist <gametype>|install_nst|uninstall_nst|install_nexuiz|pack_nst|help)
 
 options are...
 
@@ -729,8 +743,10 @@ SERVER MANAGEMENT
 --view <server name>					View a specific server based on the name given in --list
 							i.e. --view dm
 
---rcon2irc (start|stop|restart|view) <server name>	View a specific server's rcon2irc based on the name given in --list
+--rcon2irc ([re]start|stop|view) <server name>		Control a specific server's rcon2irc based on the name given in --list
 							i.e. --rcon2irc stop dm
+							
+--rcon2irc ([re]start|stop)_all				Control all server's rcon2irc based on the name given in --list
 
 CFG TOOLZ
 
