@@ -4,8 +4,8 @@
 # 
 # Nexuiz Server Toolz
 #
-# Version: 0.98
-# Released: 01/26/09
+# Version: 0.99 Beta
+# Released: 01/31/09
 # Created By: Tyler "-z-" Mulligan of the Nexuiz Ninjaz (www.nexuizninjaz.com)
 #
 # Required Software: screen
@@ -470,7 +470,7 @@ install_nst() {
 uninstall_nst() {
 	nexst_shortcuts_remove
 	# remove files?
-	echo "Do you want to remove all files (including Nexuiz and any configs you have in NST) now (y/n)?"
+	echo "Do you want to remove all files (including Nexuiz and any configs and maps you have in NST) now (y/n)?"
 	read answer
 	if [[ "$answer" == "y" ]]; then
 		remove_nexuiz
@@ -482,7 +482,8 @@ uninstall_nst() {
 
 # This removes all NST files
 remove_nst() {
-	echo "Removing NST files"
+	echo "Removing NST files..."
+	rm -rfv $core_dir
 } # End remove_nst
 
 # This Packages NST for distribution
@@ -546,7 +547,9 @@ install_nexuiz() {
 
 # This removes Nexuiz
 remove_nexuiz() {
-	echo "Removing Nexuiz"
+	echo "Removing Nexuiz.."
+	cd $core_dir
+	rm -rfv nexuiz
 } # End remove_nexuiz
 
 # Routes Help Functions based on whether extend = true or not

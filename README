@@ -1,4 +1,4 @@
-                          
+
 						  Nexuiz Ninjaz Present
 
                           v`     _   __                _    
@@ -20,10 +20,10 @@
          ~"`      )QQQW.   /_/  \____/\____/_/ /___/
                     -"$L
                       )Wc
-                       "$;                                    
+                       "$;
 
-Version: 0.98
-Pre-Released: 01/26/09 (not yet officially released / not yet FINISHED)
+Version: 0.99 Beta
+Pre-Released: 01/31/09
 Created By: Tyler "-z-" Mulligan of the Nexuiz Ninjaz (www.nexuizninjaz.com)
 
 Required Software: screen
@@ -34,7 +34,7 @@ Description:
 This script was created to help admins manage many instances of servers by loading them
 into seperate screens they can easily call by name.  For more information check --help.
 
-General Usage: nexst --(start_all|stop_all|restart_all|start <server>|stop <server>|restart <server>|list|view <server>|edit <server>|rcon2irc (start|stop|restart|start_all|stop_all|restart_all|view) <server>|create_maplist <gametype>|install_nst|uninstall_nst|install_nexuiz|pack_nst|help)
+General Usage: nexst --(start_all|stop_all|restart_all|start <server>|stop <server>|restart <server>|list|view <server>|edit <server>|rcon2irc (start|stop|restart|start_all|stop_all|restart_all|view) <server>|install_nst|uninstall_nst|install_nexuiz|pack_nst|help)
 
 for more information, type: nexst --help
 
