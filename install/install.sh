@@ -5,5 +5,5 @@
 cd ..
 latest_core=$(ls nst_core* |tail -n1)
 chmod +x $latest_core
-chmod +x extraz/pluginz/*.sh
+chmod +x extras/plugins/*.sh
 ./$latest_core --install_nst
