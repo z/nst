@@ -615,19 +615,10 @@ install_nexuiz() {
 
 # This Packages NST for distribution
 pack_nst() {
-	# this function actually needs work... it'd be better NOT to package with the NST folder
-	
-	# get a list of all the files 
 	cd $core_dir
-	cd ..
-	#xargs tar cvf nst-pack_$( date +%m%d%y ).tar < filelist.txt
-	find $core_dir ! -type f -print | egrep 'svn|Nexuiz_SVN_.*|\.git.*|servers.*offline|offline|map_pool*|local_ctf|logs/.*' > nst_exclude
-	sed -i "s#$core_dir#nst#" nst_exclude
-	echo -e "\nnst_exclude" >> nst_exclude
-	echo -e "\nnst/.gitignore" >> nst_exclude
-	echo -e "\nnst/install/lock" >> nst_exclude
-	tar cvf nst-pack_$( date +%m%d%y ).tar * --exclude-from=nst_exclude
-	rm nst_exclude
+	find $core_dir -type f -print | egrep -v 'offline|svn|Nexuiz_SVN_.*|install/lock|logs/.*/|\.git|\.pk3|\.tar|tarlist.txt' | sed "s#$core_dir/##" > tarlist.txt
+	xargs tar cvf nst-pack_$( date +%m%d%y ).tar < tarlist.txt
+	rm tarlist.txt
 } # End pack_nst
 
 # Routes Help Functions based on whether extend = true or not
