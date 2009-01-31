@@ -12,7 +12,7 @@ source plugin.inc
 # Example function
 function maps2server() {
 	# Get Gametype
-	if [ "$1" != "" ]; then
+	if [[ "$1" != "" ]]; then
 		t=$1
 	else
 		echo -e "\n[FAIL] No gametype has been set, please set it and try again"
@@ -20,7 +20,7 @@ function maps2server() {
 	fi
 	
 	# Server name
-	if [ "$2" != "" ]; then
+	if [[ "$2" != "" ]]; then
 		d=$2
 	else
 		echo -e "\n[FAIL] No servername has been set, please set it and try again.  You need to have a directory by that name in your extras/files directory."
@@ -39,18 +39,18 @@ function maps2server() {
 		# List contents, grab the name of the bsp, remove the folder name, drop any bsp not in the maps folder
 		mapname=$(unzip -l $map | grep .bsp | awk '{ print $4 }' | sed 's/maps\/\([A-Za-z_0-9.-]*\)\.bsp/\1/' | grep -vi .bsp)
 		# If a map bsp is present
-		if [ "$mapname" != "" ]; then
+		if [[ "$mapname" != "" ]]; then
 		
 			# Check mapinfo's gametype against $t
 			echo
 			game_type=$(unzip -p $map maps/$mapname.mapinfo | grep "^type")
 			
-			if [ "$game_type" != "" ]; then
+			if [[ "$game_type" != "" ]]; then
 				echo "Checking package ($map) for mapinfo: [OK]"
 				m=true
 				
 				game_type=$(unzip -p $map maps/$mapname.mapinfo | grep "^type $t")
-				if [ "$game_type" == "" ]; then
+				if [[ "$game_type" == "" ]]; then
 					echo "Checking mapinfo for gametype compatiability ($mapname): [NO]"
 				else
 					# The mapinfo from the package has this gametype
@@ -61,12 +61,12 @@ function maps2server() {
 			fi
 			
 			# If it doesn't exist, check the generated mapinfo folder
-			if [ "$game_type" == "" ]; then
+			if [[ "$game_type" == "" ]]; then
 			
 				echo "Checking ~/.nexuiz/data/data/maps/ for generated mapinfo: $mapname.mapinfo"
 				cd ~/.nexuiz/data/data/maps/
 
-				if [ ! -r "$mapname.mapinfo" ]; then
+				if [[ ! -r "$mapname.mapinfo" ]]; then
 					echo "[WARNING] No generated mapinfo found for $mapname - not adding to list"
 					status="warning"
 				else
@@ -76,7 +76,7 @@ function maps2server() {
 										
 					game_type=$(grep "^type $t" $mapname.mapinfo)
 					
-					if [ "$game_type" != "" ]; then
+					if [[ "$game_type" != "" ]]; then
 						# The check for the generated mapinfo compatiability passed
 						echo "Checking generated mapinfo for gametype compatiability ($t): [OK]"
 					fi
@@ -84,11 +84,11 @@ function maps2server() {
 			fi
 			
 			# Everything looks good, add it to the list.
-			if [ "$game_type" != "" ]; then
+			if [[ "$game_type" != "" ]]; then
 				echo "[LINKING] $mapname"
 				ln -s $core_dir/extras/map_pool/$map $core_dir/extras/files/$d/$map
 			else
-				if [ $m2 == true ]; then
+				if [[ $m2 == true ]]; then
 					echo "Checking generated mapinfo for gametype compatiability ($t): [NO]"
 				fi
 			fi

@@ -22,7 +22,7 @@ source plugin.inc
 search_packs() {
 	
 	# Get Gametype
-	if [ "$1" != "" ]; then
+	if [[ "$1" != "" ]]; then
 		string=$1
 	else
 		echo; echo "[YOU FAIL] How can I search packages for nothing?"
@@ -30,8 +30,8 @@ search_packs() {
 	fi
 	
 	# Handle Optional Directory Parameter
-	if [ "$2" != "" ]; then
-		if [ -d "$2" ]; then
+	if [[ "$2" != "" ]]; then
+		if [[ -d "$2" ]]; then
 			d=$2
 		fi
 	else
@@ -45,7 +45,7 @@ search_packs() {
 		# List contents, grab the name of the bsp, remove the folder name, drop any bsp not in the maps folder
 		search_string=`unzip -l $package | grep $string | awk '{ print $4 }'`
 		# If the string is found
-		if [ "$search_string" != "" ]; then
+		if [[ "$search_string" != "" ]]; then
 			echo -e "\n  -- found --> " $search_string "\n"
 		fi
 	done

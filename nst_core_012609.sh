@@ -72,10 +72,10 @@ start_all()
 	}
 	
 	# This can be hardcoded because it's where QuakeC puts them unless -userdir flag is set
-	if [ ! -d ~/.nexuiz/data/data/oldlogs ];then mkdir -p ~/.nexuiz/data/data/oldlogs;fi
+	if [[ ! -d ~/.nexuiz/data/data/oldlogs ]];then mkdir -p ~/.nexuiz/data/data/oldlogs;fi
 
 	# check if basedir exists
-	if [ ! -d $basedir ]; then
+	if [[ ! -d $basedir ]]; then
 		echo -e "\n[FAIL] The basedir '$basedir' is incorrect, please edit your config and try again.\n"
 		exit 1
 	fi
@@ -96,12 +96,12 @@ start_all()
 # start an individual server by its cfg name minus .cfg
 start_server()
 {
-	if [ "$1" != "" ]; then
+	if [[ "$1" != "" ]]; then
 		screenname=$1
 		cfgname="$screenname.cfg"
 		
 		# check if basedir exists
-		if [ ! -d $basedir ]; then
+		if [[ ! -d $basedir ]]; then
 			echo -e "\n[FAIL] The basedir '$basedir' is incorrect, please edit your config and try again.\n"
 			exit 1
 		fi
@@ -110,31 +110,31 @@ start_server()
 		cd $basedir
 		
 		# attempt to load the cfg based on the name of the server
-		if [ -f $core_dir/config/servers/$cfgname ]; then
+		if [[ -f $core_dir/config/servers/$cfgname ]]; then
 			
 			# check to see if there is a corresponding files directory for this server
-			if [ -d $core_dir/extras/files/$screenname ]; then
-				if [ ! -d $basedir/$screenname ]; then
+			if [[ -d $core_dir/extras/files/$screenname ]]; then
+				if [[ ! -d $basedir/$screenname ]]; then
 					ln -s $core_dir/extras/files/$screenname $basedir/$screenname
 				fi
 				# make a symlink to the cfg if there isn't one already
-				if [ ! -f $core_dir/extras/files/$screenname/$cfgname ]; then
+				if [[ ! -f $core_dir/extras/files/$screenname/$cfgname ]]; then
 					ln -s $core_dir/config/servers/$cfgname $core_dir/extras/files/$screenname/$cfgname
 				fi
 				# symlink logs if it isn't already
-				if [ ! -d $basedir/logs ]; then
+				if [[ ! -d $basedir/logs ]]; then
 					ln -s $core_dir/logs $basedir/logs
 				fi
 				# symlink global if it isn't already
-				if [ ! -d $basedir/global ]; then
+				if [[ ! -d $basedir/global ]]; then
 					ln -s $core_dir/extras/files/global $basedir/global
 				fi
 				# symlink common if it isn't already
-				if [ ! -d $basedir/common ]; then
+				if [[ ! -d $basedir/common ]]; then
 					ln -s $core_dir/config/servers/common $basedir/common
 				fi
 			else
-				if [ ! -f ~/.nexuiz/data/$cfgname ]; then
+				if [[ ! -f ~/.nexuiz/data/$cfgname ]]; then
 					ln -s $core_dir/config/servers/$cfgname ~/.nexuiz/data/$cfgname
 				fi
 			fi
@@ -142,8 +142,8 @@ start_server()
 			echo -e "\n[Starting Server] $screenname"
 			
 			# This can be hardcoded because it's where QuakeC puts them -- THIS NEEDS TO BE UPDATED
-			if [ ! -d ~/.nexuiz/data/data/oldlogs ];then mkdir -p ~/.nexuiz/data/data/oldlogs;fi
-			if [ -f ~/.nexuiz/data/data/$screenname*.log ]; then
+			if [[ ! -d ~/.nexuiz/data/data/oldlogs ]];then mkdir -p ~/.nexuiz/data/data/oldlogs;fi
+			if [[ -f ~/.nexuiz/data/data/$screenname*.log ]]; then
 				mv ~/.nexuiz/data/data/$screenname*.log ~/.nexuiz/data/data/oldlogs
 				echo -e " -- [Archiving Server Logs for: $screenname]"
 			else
@@ -151,14 +151,14 @@ start_server()
 			fi
 			
 			# if there is a folder for this server in extras/files -- start with that as the game dir
-			if [ -d $core_dir/extras/files/$screenname ];then
+			if [[ -d $core_dir/extras/files/$screenname ]];then
 				screen -m -d -S $screenname $basedir/./nexuiz-dedicated -game global -game common -game $screenname +exec $cfgname -userdir logs
 			# otherwise use .nexuiz
 			else
 				screen -m -d -S $screenname $basedir/./nexuiz-dedicated +exec $cfgname
 			fi
 			
-			if [ "$auto_rcon" == "true" ]; then
+			if [[ "$auto_rcon" == "true" ]]; then
 				rcon2irc_start $screenname
 			fi
 		else
@@ -186,15 +186,15 @@ stop_all()
 # stop a single server by it's session name
 stop_server()
 {
-	if [ "$1" != "" ]; then
+	if [[ "$1" != "" ]]; then
 		gsname=$1
 		requested=$(ps -ef | grep SCREEN | grep nexuiz-dedicated | grep -v grep | awk '{ print $12 }' | grep ^${gsname}$)
 
-		if [ "$requested" != "" ]; then
+		if [[ "$requested" != "" ]]; then
 			#pid=$(ps -ef | grep SCREEN | grep nexuiz-dedicated | grep -v grep | grep "+exec *\/.*${gsname}.cfg" | awk '{ print $2 }')
 			pid=$(ps -ef | grep SCREEN | grep nexuiz-dedicated | grep -v grep | grep "+exec ${gsname}.cfg" | awk '{ print $2 }')
 			pkill -P $pid
-			if [ "$auto_rcon" == "true" ]; then
+			if [[ "$auto_rcon" == "true" ]]; then
 				rcon2irc_stop $gsname
 			fi
 			echo -e "[Stopped] $gsname\n"
@@ -219,12 +219,12 @@ restart_all()
 # Restarts a specific server
 restart_server()
 {
-	if [ "$1" != "" ]; then
+	if [[ "$1" != "" ]]; then
 		gsname=$1
 		
 		requested=$(ps -ef | grep SCREEN | grep nexuiz-dedicated | grep -v grep | awk '{ print $12 }' | grep ^${gsname}$)
 
-		if [ "$requested" != "" ]; then
+		if [[ "$requested" != "" ]]; then
 			stop_server $gsname
 			
 			echo -e "\nRestarting $gsname in 5..."
@@ -243,7 +243,7 @@ restart_server()
 
 list_servers() # Format all the current running servers in a easy to read way
 {
-	if [ "$( ps -ef | grep nexuiz-dedicated | grep SCREEN | grep -v grep )" != "" ]; then
+	if [[ "$( ps -ef | grep nexuiz-dedicated | grep SCREEN | grep -v grep )" != "" ]]; then
 		echo; echo -e "Currently Running Nexuiz Servers\n-----------------------------------------------------------------------------------------------------------------------"
 		gsname=$(ps -ef | grep nexuiz-dedicated | grep SCREEN | grep -v grep | awk '{ print $12 }')
 		
@@ -252,17 +252,17 @@ list_servers() # Format all the current running servers in a easy to read way
 			gscfg=$(echo $gsname | sed "s/\(.*\)/\1.cfg/")
 			gsport=$(grep ^port -r $core_dir/config/servers/${gscfg} | awk '{ print $2 }')
 			gsaddress=$(grep ^net_address -r $core_dir/config/servers/${gscfg} | awk '{ print $2 }')
-			if [ "$gsaddress" == "" ]; then gsaddress="$base_address"; fi
-			if [ "$qstat_enabled" == true ]; then
+			if [[ "$gsaddress" == "" ]]; then gsaddress="$base_address"; fi
+			if [[ "$qstat_enabled" == true ]]; then
 				gsplayers=$(qstat -P -nexuizs $gsaddress:$gsport | head -n 2 | tail -n 1 | awk '{ print $2 }')
 			else
 				gsplayers="enable qstat"
 			fi
 			
 			rconstatus="no"
-			if [ "$auto_rcon" == "true" ]; then
+			if [[ "$auto_rcon" == "true" ]]; then
 				rconscreen=$(screen -ls | grep $gsname | awk '{ print $1 }' | grep \.$gsname$ | grep "rcon_")
-				if [ "$rconscreen" != "" ]; then
+				if [[ "$rconscreen" != "" ]]; then
 					rconstatus="yes"
 				fi
 			fi
@@ -279,7 +279,7 @@ list_servers() # Format all the current running servers in a easy to read way
 
 # Loads a specific server into screen
 function view_server {
-	if [ "$1" != "" ]; then
+	if [[ "$1" != "" ]]; then
 		gsname=$1
 		
 		screenid=$(screen -ls | grep $gsname | awk '{ print $1 }' | grep \.$gsname$ | grep -v "rcon_" | awk -F . '{ print $1 }')
@@ -309,11 +309,11 @@ function rcon2irc_router {
 
 # Starts an rcon2irc server by name
 function rcon2irc_start {
-	if [ "$1" != "" ]; then
+	if [[ "$1" != "" ]]; then
 		screenname=$1
 		confname="$screenname.conf"
 		# If an rcon2irc config exists, start it.
-		if [ -f $core_dir/config/servers/rcon2irc/$confname ]; then	
+		if [[ -f $core_dir/config/servers/rcon2irc/$confname ]]; then	
 			echo -e "[Starting rcon2irc bot] $screenname\n"
 			screen -m -d -S rcon_$screenname /usr/bin/perl $basedir/server/rcon2irc/rcon2irc.pl $core_dir/config/servers/rcon2irc/$confname
 		else
@@ -326,11 +326,11 @@ function rcon2irc_start {
 
 # Starts an rcon2irc server by name
 function rcon2irc_stop {
-	if [ "$1" != "" ]; then
+	if [[ "$1" != "" ]]; then
 		gsname=$1
 		echo -e "[Stopping rcon2irc bot] $screenname"
 		screenid=$(screen -ls | grep $gsname | awk '{ print $1 }' | grep \.$gsname$ | grep "rcon_" | awk -F . '{ print $1 }')
-		if [ "$screenid" != "" ]; then
+		if [[ "$screenid" != "" ]]; then
 			kill -9 $screenid
 			screen -wipe
 		else
@@ -343,7 +343,7 @@ function rcon2irc_stop {
 
 # Restarts an rcon2irc server by name
 function rcon2irc_restart {
-	if [ "$1" != "" ]; then
+	if [[ "$1" != "" ]]; then
 		gsname=$1
 		echo -e "[Restarting rcon2irc bot] $screenname\n"
 		rcon2irc_stop $gsname
@@ -362,7 +362,7 @@ function rcon2irc_restart_all {
 
 # Loads a specific rcon server into screen
 function rcon2irc_view {
-	if [ "$1" != "" ]; then
+	if [[ "$1" != "" ]]; then
 		gsname=$1
 		screenid=$(screen -ls | grep $gsname | awk '{ print $1 }' | grep \.$gsname$ | grep "rcon_" | awk -F . '{ print $1 }')
 		echo -e "\n!!!IMPORTANT!!! To get out of a screen, hold ctrl, then press a, then d\n\nPress enter to continue"
@@ -411,13 +411,13 @@ rcon() { # LITTLE BROKEN RIGHT NOW
 
 # Edits a specific server config based on the session name (--list name)
 function edit_server {
-	if [ "$1" != "" ]; then
+	if [[ "$1" != "" ]]; then
 		gsname=$1
 	
 		$default_editor $core_dir/config/servers/$1.cfg
 		echo "Do you want to restart this server now (y/n)?"
 		read answer
-		if [ "$answer" == "y" ]; then
+		if [[ "$answer" == "y" ]]; then
 			restart_server $gsname
 		else
 			echo "[alert] Not restarting $gsname"
@@ -434,7 +434,7 @@ function create_maplist {
 	i="g_maplist=\""
 	
 	# Get Gametype
-	if [ "$1" != "" ]; then
+	if [[ "$1" != "" ]]; then
 		t=$1
 	else
 		echo; echo "[WARNING] No gametype has been set, setting to dm"
@@ -442,8 +442,8 @@ function create_maplist {
 	fi
 	
 	# Handle Optional Directory Parameter
-	if [ "$2" != "" ]; then
-		if [ -d "$2" ]; then
+	if [[ "$2" != "" ]]; then
+		if [[ -d "$2" ]]; then
 			d=$2
 		fi
 	else
@@ -460,18 +460,18 @@ function create_maplist {
 		# List contents, grab the name of the bsp, remove the folder name, drop any bsp not in the maps folder
 		mapname=$(unzip -l $map | grep .bsp | awk '{ print $4 }' | sed 's/maps\/\([A-Za-z_0-9.-]*\)\.bsp/\1/' | grep -vi .bsp)
 		# If a map bsp is present
-		if [ "$mapname" != "" ]; then
+		if [[ "$mapname" != "" ]]; then
 		
 			# Check mapinfo's gametype against $t
 			echo
 			game_type=$(unzip -p $map maps/$mapname.mapinfo | grep "^type")
 			
-			if [ "$game_type" != "" ]; then
+			if [[ "$game_type" != "" ]]; then
 				echo "Checking package ($map) for mapinfo: [OK]"
 				m=true
 				
 				game_type=$(unzip -p $map maps/$mapname.mapinfo | grep "^type $t")
-				if [ "$game_type" == "" ]; then
+				if [[ "$game_type" == "" ]]; then
 					echo "Checking mapinfo for gametype compatiability ($mapname): [NO]"
 				else
 					# The mapinfo from the package has this gametype
@@ -482,12 +482,12 @@ function create_maplist {
 			fi
 			
 			# If it doesn't exist, check the generated mapinfo folder
-			if [ "$game_type" == "" ]; then
+			if [[ "$game_type" == "" ]]; then
 			
 				echo "Checking ~/.nexuiz/data/data/maps/ for generated mapinfo: $mapname.mapinfo"
 				cd ~/.nexuiz/data/data/maps/
 
-				if [ ! -r "$mapname.mapinfo" ]; then
+				if [[ ! -r "$mapname.mapinfo" ]]; then
 					echo "[WARNING] No generated mapinfo found for $mapname - not adding to list"
 					status="warning"
 				else
@@ -497,7 +497,7 @@ function create_maplist {
 										
 					game_type=$(grep "^type $t" $mapname.mapinfo)
 					
-					if [ "$game_type" != "" ]; then
+					if [[ "$game_type" != "" ]]; then
 						# The check for the generated mapinfo compatiability passed
 						echo "Checking generated mapinfo for gametype compatiability ($t): [OK]"
 					fi
@@ -505,13 +505,13 @@ function create_maplist {
 			fi
 			
 			# Everything looks good, add it to the list.
-			if [ "$game_type" != "" ]; then
+			if [[ "$game_type" != "" ]]; then
 				# Print with quotes and a comma then append to string 'i'
 				echo "[ADDING] $mapname to the list"
 				mapname="$t"\_"$mapname "
 				i=$i$mapname
 			else
-				if [ $m2 == true ]; then
+				if [[ $m2 == true ]]; then
 					echo "Checking generated mapinfo for gametype compatiability ($t): [NO]"
 				fi
 			fi
@@ -523,7 +523,7 @@ function create_maplist {
 	i=$(echo $i | sed 's/ $//')
 	i=$i"\""
 	
-	if [ "$status" == "warning" ]; then
+	if [[ "$status" == "warning" ]]; then
 		echo; echo "[WARNING] Some maps weren't added because no mapinfo files were found.  Some maps may not be included!  Restart Nexuiz to generate them automatically, then run this script again."
 	fi
 	
@@ -543,7 +543,7 @@ install_nst() {
 		# Install Nexuiz?
 		echo "Do you want to install nexuiz now (y/n)?"
 		read answer
-		if [ "$answer" == "y" ]; then
+		if [[ "$answer" == "y" ]]; then
 			install_nexuiz
 		else
 			echo -e "\n[alert] Not installing Nexuiz, You either need to run --install_nexuiz later or unzip a stable release 2.4.2 or higher in the nst/nexuiz folder."
@@ -620,6 +620,7 @@ pack_nst() {
 	# get a list of all the files 
 	cd $core_dir
 	cd ..
+	#xargs tar cvf nst-pack_$( date +%m%d%y ).tar < filelist.txt
 	find $core_dir ! -type f -print | egrep 'svn|Nexuiz_SVN_.*|\.git.*|servers.*offline|offline|map_pool*|local_ctf|logs/.*' > nst_exclude
 	sed -i "s#$core_dir#nst#" nst_exclude
 	echo -e "\nnst_exclude" >> nst_exclude
@@ -634,7 +635,7 @@ nst_help_all ()
 {
 	cd $core_dir/extras/plugins
 	
-	for plugin in $(ls); do
+	for plugin in $(ls |grep -v plugin.inc); do
 		ext_help=$($core_dir/extras/plugins/$plugin --help)
 		full_help="$full_help $ext_help"
 	done

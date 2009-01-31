@@ -26,7 +26,7 @@ source plugin.inc
 # Install Nexuiz from SVN
 install_nexuiz_old() {
 	# Get Install Folder Name
-	if [ "$1" != "" ]; then
+	if [[ "$1" != "" ]]; then
 		dirname=$1
 	else
 		echo; echo "[YOU FAIL] I need a folder name"
@@ -71,7 +71,7 @@ rcon_old() {
 update_nexuiz() {
 
 	# Get Install Folder Name
-	if [ "$1" != "" ]; then
+	if [[ "$1" != "" ]]; then
 		dirname=$1
 	else
 		echo; echo "[YOU FAIL] I need a folder name"
@@ -113,7 +113,7 @@ update_nexuiz() {
 compile_nexuiz() {
 
 	# Get Install Folder Name
-#	if [ "$1" != "" ]; then
+#	if [[ "$1" != "" ]]; then
 #		dirname=$1
 #	else
 #		echo; echo "[YOU FAIL] I need a folder name"
@@ -122,13 +122,13 @@ compile_nexuiz() {
 	
 	echo "Begin of build..."
 	# qcc
-	#if [ $QC_SVNVERS_NEW != $QC_SVNVERS_OLD ]; then
+	#if [[ $QC_SVNVERS_NEW != $QC_SVNVERS_OLD ]]; then
 		cd ~/nn_servers/svn/qclib
 		make
 	#fi
 
 	# nexuiz
-	#if [ $NEX_SVNVERS_NEW != $NEX_SVNVERS_OLD ]; then
+	#if [[ $NEX_SVNVERS_NEW != $NEX_SVNVERS_OLD ]]; then
 		cd ~/nn_servers/svn/trunk/data/qcsrc/client
 		~/nn_servers/svn/qclib/fteqcc.bin 
 		cd ~/nn_servers/svn/trunk/data/qcsrc/server
@@ -138,7 +138,7 @@ compile_nexuiz() {
 	#fi
 
 	# darkplaces
-	#if [ $DP_SVNVERS_NEW != $DP_SVNVERS_OLD ]; then
+	#if [[ $DP_SVNVERS_NEW != $DP_SVNVERS_OLD ]]; then
 		cd ~/nn_servers/svn/darkplaces/
 		make clean
 		#make CC="gcc -g -arch i386 -arch ppc -isysroot /Developer/SDKs/MacOSX10.4u.sdk" cl-nexuiz
@@ -151,7 +151,7 @@ compile_nexuiz() {
 search_packs() {
 	
 	# Get Gametype
-	if [ "$1" != "" ]; then
+	if [[ "$1" != "" ]]; then
 		string=$1
 	else
 		echo; echo "[YOU FAIL] How can I search packages for nothing?"
@@ -159,8 +159,8 @@ search_packs() {
 	fi
 	
 	# Handle Optional Directory Parameter
-	if [ "$2" != "" ]; then
-		if [ -d "$2" ]; then
+	if [[ "$2" != "" ]]; then
+		if [[ -d "$2" ]]; then
 			d=$2
 		fi
 	else
@@ -174,7 +174,7 @@ search_packs() {
 		# List contents, grab the name of the bsp, remove the folder name, drop any bsp not in the maps folder
 		search_string=`unzip -l $package | grep $string | awk '{ print $4 }'`
 		# If the string is found
-		if [ "$search_string" != "" ]; then
+		if [[ "$search_string" != "" ]]; then
 			echo -e "\n  -- found --> " $search_string "\n"
 		fi
 	done
