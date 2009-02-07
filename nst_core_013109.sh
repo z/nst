@@ -683,6 +683,7 @@ nst_extend ()
 		string=$(egrep "$pfunction\)" $plugin)
 		if [[ "$string" != "" ]]; then
 			# check if chmod +X
+			chmod +x $core_dir/extras/plugins/./$plugin
 			# execute script with parameter
 			echo -e "\nExecuting function from plugin: $plugin \n"
 			$core_dir/extras/plugins/./$plugin $1 $2 $3 $4
