@@ -71,17 +71,6 @@ start_all()
 		exit 1
 	}
 	
-	# This can be hardcoded because it's where QuakeC puts them unless -userdir flag is set
-	# Needs a major update to support userdir
-	if [[ ! -d ~/.nexuiz/data/data/oldlogs ]];then mkdir -p ~/.nexuiz/data/data/oldlogs;fi
-
-	# check if basedir exists
-	if [[ ! -d $basedir ]]; then
-		echo -e "\n[FAIL] The basedir '$basedir' is incorrect, please edit your config and try again.\n"
-		exit 1
-	fi
-	cd $basedir
-
 	# List any nn_server configs found
 	for cfg in $(ls $core_dir/config/servers/*.cfg); do
 		cfgname=$(echo $cfg | awk -F/ '{print $NF}')
@@ -98,39 +87,47 @@ start_server()
 	if [[ "$1" != "" ]]; then
 		screenname=$1
 		cfgname="$screenname.cfg"
+		confname="$screenname.conf"
+		
+		if [[ -f $core_dir/config/servers/$confname ]]; then
+			source $core_dir/config/servers/$confname
+			this_basedir=$server_basedir
+		else
+			this_basedir=$basedir
+		fi
 		
 		# check if basedir exists
-		if [[ ! -d $basedir ]]; then
-			echo -e "\n[FAIL] The basedir '$basedir' is incorrect, please edit your config and try again.\n"
+		if [[ ! -d $this_basedir ]]; then
+			echo -e "\n[FAIL] The basedir '$this_basedir' is incorrect, please edit your config and try again.\n"
 			exit 1
 		fi
 		
-		# change to basedir so nexuiz can be executed and load cfgs without freaking out
-		cd $basedir
+		# change to basedir so nexuiz can be executed and load cfgs without freaking out		
+		cd $this_basedir
 		
 		# attempt to load the cfg based on the name of the server
 		if [[ -f $core_dir/config/servers/$cfgname ]]; then
 			
 			# check to see if there is a corresponding files directory for this server
 			if [[ -d $core_dir/extras/files/$screenname ]]; then
-				if [[ ! -d $basedir/$screenname ]]; then
-					ln -s $core_dir/extras/files/$screenname $basedir/$screenname
+				if [[ ! -d $this_basedir/$screenname ]]; then
+					ln -s $core_dir/extras/files/$screenname $this_basedir/$screenname
 				fi
 				# make a symlink to the cfg if there isn't one already
 				if [[ ! -f $core_dir/extras/files/$screenname/$cfgname ]]; then
 					ln -s $core_dir/config/servers/$cfgname $core_dir/extras/files/$screenname/$cfgname
 				fi
 				# symlink logs if it isn't already
-				if [[ ! -d $basedir/logs ]]; then
-					ln -s $core_dir/logs $basedir/logs
+				if [[ ! -d $this_basedir/logs ]]; then
+					ln -s $core_dir/logs $this_basedir/logs
 				fi
 				# symlink global if it isn't already
-				if [[ ! -d $basedir/global ]]; then
-					ln -s $core_dir/extras/files/global $basedir/global
+				if [[ ! -d $this_basedir/global ]]; then
+					ln -s $core_dir/extras/files/global $this_basedir/global
 				fi
 				# symlink common if it isn't already
-				if [[ ! -d $basedir/common ]]; then
-					ln -s $core_dir/config/servers/common $basedir/common
+				if [[ ! -d $this_basedir/common ]]; then
+					ln -s $core_dir/config/servers/common $this_basedir/common
 				fi
 			else # No files directory -- execute from ~/.nexuiz/data/
 				if [[ ! -f ~/.nexuiz/data/$cfgname ]]; then
@@ -151,10 +148,10 @@ start_server()
 			
 			# if there is a folder for this server in extras/files -- start with that as the game dir
 			if [[ -d $core_dir/extras/files/$screenname ]];then
-				screen -m -d -S $screenname $basedir/./nexuiz-dedicated -game global -game common -game $screenname +exec $cfgname -userdir logs
+				screen -m -d -S $screenname $this_basedir/./nexuiz-dedicated -game global -game common -game $screenname +serverconfig $cfgname -userdir logs
 			# otherwise use ~/.nexuiz/data
 			else
-				screen -m -d -S $screenname $basedir/./nexuiz-dedicated +exec $cfgname
+				screen -m -d -S $screenname $this_basedir/./nexuiz-dedicated +serverconfig $cfgname
 			fi
 			
 			if [[ "$auto_rcon" == "true" ]]; then
@@ -190,7 +187,7 @@ stop_server()
 		requested=$(ps -ef | grep SCREEN | grep nexuiz-dedicated | grep -v grep | awk '{ print $12 }' | grep ^${gsname}$)
 
 		if [[ "$requested" != "" ]]; then
-			pid=$(ps -ef | grep SCREEN | grep nexuiz-dedicated | grep -v grep | grep "+exec ${gsname}.cfg" | awk '{ print $2 }')
+			pid=$(ps -ef | grep SCREEN | grep nexuiz-dedicated | grep -v grep | grep "+serverconfig ${gsname}.cfg" | awk '{ print $2 }')
 			pkill -P $pid
 			if [[ "$auto_rcon" == "true" ]]; then
 				rcon2irc_stop $gsname
@@ -313,10 +310,19 @@ function rcon2irc_start {
 	if [[ "$1" != "" ]]; then
 		screenname=$1
 		confname="$screenname.conf"
+		
+		# I'm reusing the variable, I'm a bad boy
+		if [[ -f $core_dir/config/servers/$confname ]]; then
+			source $core_dir/config/servers/$confname
+			this_basedir=$server_basedir
+		else
+			this_basedir=$basedir
+		fi
+		
 		# If an rcon2irc config exists, start it.
 		if [[ -f $core_dir/config/servers/rcon2irc/$confname ]]; then	
 			echo -e "[Starting rcon2irc bot] $screenname\n"
-			screen -m -d -S rcon_$screenname /usr/bin/perl $basedir/server/rcon2irc/rcon2irc.pl $core_dir/config/servers/rcon2irc/$confname
+			screen -m -d -S rcon_$screenname /usr/bin/perl $this_basedir/server/rcon2irc/rcon2irc.pl $core_dir/config/servers/rcon2irc/$confname
 		else
 			echo -e "\n -- [tip] If you create a file in your '$core_dir/config/servers/rcon2irc' folder called '$confname' per div's rcon2irc requirements, it will automatically be loaded.\n"
 		fi
@@ -413,8 +419,8 @@ rcon() { # LITTLE BROKEN RIGHT NOW
 	#command=$(echo $* | sed 's/^--rcon [a-z0-9_-]* //' )
 	command=$(echo $* | sed 's/^--rcon [a-z0-9_-]* //' | sed 's/"/\\\"/g' )
 	#echo $command
-	#echo "execing command: rcon_address=$dp_server rcon_password=$dp_password $basedir/Docs/server/./rcon.pl $command"
-	rcon_address=$dp_server rcon_password=$dp_password $basedir/server/./rcon.pl "$command"
+	#echo "execing command: rcon_address=$dp_server rcon_password=$dp_password $this_basedir/Docs/server/./rcon.pl $command"
+	rcon_address=$dp_server rcon_password=$dp_password $this_basedir/server/./rcon.pl "$command"
 	
 	#cleanup
 	rm $core_dir/config/servers/rcon2irc/temp_rcon.conf
@@ -533,10 +539,10 @@ nexst_shortcuts_remove() {
 install_nexuiz() {
 	echo -e "\n-- Starting Nexuiz Install --\n"
 	cd $core_dir/nexuiz
-	if [[ -f $(ls *.sh |grep sb_install) ]]; then
+	if [[ -f $(ls *.sh |grep sb_install |tail -n1) ]]; then
 		sb_script=$(ls *.sh |grep sb_install |tail -n1)
 		chmod +x $sb_script
-		echo -e "\nThis is going to take a while, it's not hanging.  You might want to make a sandwhich!\n"
+		echo -e "\nThis is going to take a while, it's not hanging, just checking out a lot of things from SVN.  You might want to make a sandwich!\n"
 		./$sb_script -t s
 		latest_revision=$(ls $core_dir/nexuiz/ |grep Nexuiz_SVN |tail -n1)
 		sed -i "s#basedir=.*#basedir=\"$core_dir/nexuiz/${latest_revision}\"#" $core_dir/config/base.conf

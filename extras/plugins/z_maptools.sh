@@ -11,6 +11,24 @@
 source plugin.inc
 
 # Example function
+function css_desaturate() {
+	cp /var/www/experiments/css_desaturate/css/$1 /var/www/experiments/css_desaturate/css/desaturated.css
+	for line in $(grep -i "\#\([0-9a-f]\{3\}\|[0-9a-f]\{6\}\)" /var/www/experiments/css_desaturate/css/${1}); do
+		#echo $line
+		color=$(echo $line | grep -i "\#\([0-9a-f]\{3\}\|[0-9a-f]\{6\}\)" | sed 's/.*\#\([0-9a-f]\{6\}\|[0-9a-f]\{3\}\).*/\#\1/gi')
+		if [[ "$color" != "" ]]; then
+			desaturated=$(hex_desaturate $color)
+			echo $color " to " $desaturated
+			sed -i "s/${color}/${desaturated}/g" /var/www/experiments/css_desaturate/css/desaturated.css
+		fi
+	done
+}
+
+function hex_desaturate() {
+	echo $1 | sed 's/\#\([0-9a-f]\{1\}\|[0-9a-f]\{2\}\)\([0-9a-f]\{1\}\|[0-9a-f]\{2\}\)\([0-9a-f]\{1\}\|[0-9a-f]\{2\}\)/\1 \2 \3/gi' | sed 's/\([0-9a-f]\)\{1\} \([0-9a-f]\)\{1\} \([0-9a-f]\)\{1\}/\1\1 \2\2 \3\3/gi' | awk '{ printf "%d\n%d\n%d\n\n", "0x" $1, "0x" $2, "0x" $3 }' | sort -g | tail -n1 | awk '{ printf "#%02X%02X%02X\n", $1, $1, $1 }'
+}
+
+# Example function
 function revision() {
 	
 	# needs to be made dynamic
@@ -62,6 +80,7 @@ echo -e "\n
 
 # Case swtich to filter params
 case $1 in
+  --css_desaturate) css_desaturate $2;;			# Search packages for a string
   --revision) revision $2;;			# Search packages for a string
   --help) help;;					# command line parameter help
   *) help;;							# gigo

@@ -1,6 +1,7 @@
 install/lock
 nexuiz/svn/*
 nexuiz/Nexuiz_SVN_*
+nexuiz/nexuiz_25
 nexuiz/compile_nexuiz_svn.log
 config/servers/offline
 config/servers/rcon2irc/offline
