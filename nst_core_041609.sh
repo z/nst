@@ -224,7 +224,7 @@ restart_server()
 			
 			echo -e "\nRestarting $gsname in 5..."
 		
-			sleep 1; echo "4"; sleep 1; echo "3"; sleep 1; echo "2"; sleep 1; echo "1";
+			sleep 1; echo -e "4"; sleep 1; echo -e "3"; sleep 1; echo -e "2"; sleep 1; echo -e "1";
 			start_server $gsname
 		else
 			echo -e "\n[ERROR] That server is not running."
@@ -239,17 +239,17 @@ restart_server()
 list_servers() # Format all the current running servers in a easy to read way
 {
 	if [[ "$( ps -ef | grep nexuiz-dedicated | grep SCREEN | grep -v grep )" != "" ]]; then
-		echo; echo -e "Currently Running Nexuiz Servers\n-----------------------------------------------------------------------------------------------------------------------"
+		echo; echo -e " Currently Running Nexuiz Servers\n ----------------------------------------------------------------------------------------------------------------------"
 		gsname=$(ps -ef | grep nexuiz-dedicated | grep SCREEN | grep -v grep | awk '{ print $12 }')
-		
-		ps -ef | grep nexuiz-dedicated | grep SCREEN | grep -v grep | awk '{printf "%s %s\n", $2, $12}' | while read gspid gsname
-		do
+
+		while read gspid gsmem gsname; do
 			gscfg=$(echo $gsname | sed "s/\(.*\)/\1.cfg/")
 			gsport=$(grep ^port -r $core_dir/config/servers/${gscfg} | awk '{ print $2 }')
 			gsaddress=$(grep ^net_address -r $core_dir/config/servers/${gscfg} | awk '{ print $2 }')
 			if [[ "$gsaddress" == "" ]]; then gsaddress="$base_address"; fi
 			if [[ "$qstat_enabled" == true ]]; then
 				gsplayers=$(qstat -P -nexuizs $gsaddress:$gsport | head -n 2 | tail -n 1 | awk '{ print $2 }')
+				totalplayers=$((totalplayers+$(echo $gsplayers | awk -F / '{ print $1 }')))
 			else
 				gsplayers="enable qstat"
 			fi
@@ -259,11 +259,17 @@ list_servers() # Format all the current running servers in a easy to read way
 				rconscreen=$(screen -ls | grep $gsname | awk '{ print $1 }' | grep \.$gsname$ | grep "rcon_")
 				if [[ "$rconscreen" != "" ]]; then
 					rconstatus="yes"
+					rcontotal=$((rcontotal+1))
 				fi
 			fi
 			
-			echo -e "Address:" $gsaddress:$gsport "\t  PID:" $gspid "  \tName:" $gsname "    \tPlayers:" $gsplayers "\trcon2irc:" $rconstatus
-		done; echo
+			totalmemory=$((totalmemory+gsmem))
+			totalservers=$((totalservers+1))
+			
+			echo -e " Address:" $gsaddress:$gsport "\t PID:" $gspid "\t MEM:" $(echo $gsmem |awk '{ print $1 * 0.0009765625}') " \tName:" $gsname "  \tPlayers:" $gsplayers "\trcon2irc:" $rconstatus
+		done < <( ps -C nexuiz-dedicate -o pid,vsz,args --sort vsz | sed '1d' | awk '{ printf "%s %s %s\n", $1, $2, $9 }' )
+		echo " ----------------------------------------------------------------------------------------------------------------------"
+		echo -e " Totals:  $totalservers servers                                   $(echo $totalmemory |awk '{ print $1 * 0.0009765625}')mb                                    $totalplayers                $rcontotal\n"
 	else
 		echo -e "\n[WARNING] No Nexuiz servers are currently running"
 		echo -e "\n[ATTENTION] Here's a list of available cfgs:\n"
@@ -273,7 +279,7 @@ list_servers() # Format all the current running servers in a easy to read way
 } # End list_servers
 
 # Loads a specific server into screen
-function view_server {
+view_server() {
 	if [[ "$1" != "" ]]; then
 		gsname=$1
 		
@@ -292,7 +298,7 @@ function view_server {
 ####################################################################
 
 # Routes rcon2irc commands
-function rcon2irc_router {
+rcon2irc_router() {
 	case $1 in
 	  start) rcon2irc_start $2;;				# start a specific rcon2irc bot
 	  stop) rcon2irc_stop $2;;					# stop a specific rcon2irc bot
@@ -306,7 +312,7 @@ function rcon2irc_router {
 }
 
 # Starts an rcon2irc server by name
-function rcon2irc_start {
+rcon2irc_start() {
 	if [[ "$1" != "" ]]; then
 		screenname=$1
 		confname="$screenname.conf"
@@ -332,14 +338,14 @@ function rcon2irc_start {
 } # End rcon2irc_start
 
 # Starts an rcon2irc server by name
-function rcon2irc_stop {
+rcon2irc_stop() {
 	if [[ "$1" != "" ]]; then
 		gsname=$1
 		echo -e "[Stopping rcon2irc bot] $screenname"
 		screenid=$(screen -ls | grep $gsname | awk '{ print $1 }' | grep \.$gsname$ | grep "rcon_" | awk -F . '{ print $1 }')
 		if [[ "$screenid" != "" ]]; then
 			kill -9 $screenid
-			screen -wipe
+			echo $(screen -wipe |grep $gsname)
 		else
 			echo -e "[WARNING] rcon2irc bot for $gsname is not running"
 		fi
@@ -349,7 +355,7 @@ function rcon2irc_stop {
 } # End rcon2irc_stop
 
 # Restarts an rcon2irc server by name
-function rcon2irc_restart {
+rcon2irc_restart() {
 	if [[ "$1" != "" ]]; then
 		gsname=$1
 		echo -e "[Restarting rcon2irc bot] $screenname\n"
@@ -361,28 +367,28 @@ function rcon2irc_restart {
 } # End rcon2irc_restart
 
 # Starts all rcon2irc servers
-function rcon2irc_start_all {
+rcon2irc_start_all() {
 	for conf in $(ls $core_dir/config/servers/rcon2irc/*.conf); do
 		rcon2irc_start $conf
 	done
 } # End rcon2irc_start_all
 
 # Stops all rcon2irc servers
-function rcon2irc_stop_all {
+rcon2irc_stop_all() {
 	for conf in $(ls $core_dir/config/servers/rcon2irc/*.conf); do
 		rcon2irc_stop $conf
 	done
 } # End rcon2irc_stop_all
 
 # Restarts all rcon2irc servers
-function rcon2irc_restart_all {
+rcon2irc_restart_all() {
 	for conf in $(ls $core_dir/config/servers/rcon2irc/*.conf); do
 		rcon2irc_restart $conf
 	done
 } # End rcon2irc_restart_all
 
 # Loads a specific rcon server into screen
-function rcon2irc_view {
+rcon2irc_view() {
 	if [[ "$1" != "" ]]; then
 		gsname=$1
 		screenid=$(screen -ls | grep $gsname | awk '{ print $1 }' | grep \.$gsname$ | grep "rcon_" | awk -F . '{ print $1 }')
@@ -420,6 +426,14 @@ rcon() { # LITTLE BROKEN RIGHT NOW
 	command=$(echo $* | sed 's/^--rcon [a-z0-9_-]* //' | sed 's/"/\\\"/g' )
 	#echo $command
 	#echo "execing command: rcon_address=$dp_server rcon_password=$dp_password $this_basedir/Docs/server/./rcon.pl $command"
+	
+	if [[ -f $core_dir/config/servers/$confname ]]; then
+		source $core_dir/config/servers/$confname
+		this_basedir=$server_basedir
+	else
+		this_basedir=$basedir
+	fi
+		
 	rcon_address=$dp_server rcon_password=$dp_password $this_basedir/server/./rcon.pl "$command"
 	
 	#cleanup
@@ -431,7 +445,7 @@ rcon() { # LITTLE BROKEN RIGHT NOW
 ####################################################################
 
 # Edits a specific server config based on the session name (--list name)
-function edit_server {
+edit_server() {
 	if [[ "$1" != "" ]]; then
 		gsname=$1
 	
