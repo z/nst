@@ -462,6 +462,15 @@ edit_server() {
 	fi
 } # End edit_server
 
+# View a specific server log based on the session name (--list name)
+view_server_log() {
+	if [[ "$1" != "" ]]; then
+		tail "$( if [[ "$2" != "" ]]; then echo -n$2; else echo -n400;fi )" $(ls -t $core_dir/logs/$1/*.log | head -n1)
+	else
+		echo -e "\n[ERROR] No server specified\n"
+	fi
+} # End view_log
+
 
 ###############
 # Start System Functions
@@ -726,6 +735,7 @@ case $1 in
   --restart_all) restart_all;;				# restart all servers
   --list) list_servers;;					# list all servers
   --view) view_server $2;;					# open the screen for a specific server
+  --view_log) view_server_log $2 $3;;		# view the log of a specific server
   --rcon2irc) rcon2irc_router $2 $3;;		# routes the rcon2irc (start,stop,restart,view) for a specific server
   --rcon) rcon $*;;							# passes rcon commands to the server
   --edit) edit_server $2;;					# edit a specific server's cfg
